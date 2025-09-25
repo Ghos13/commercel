@@ -1,0 +1,40 @@
+header {
+  padding: 25px 0px;
+  background: #F4E9DC;
+}
+
+.header_logo {
+  width: 100px;
+  height: 80px;
+  border-radius: 50%;
+}
+.header-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 20px;
+  font-size: 18px;
+  color: black;
+  text-transform: uppercase;
+}
+
+.header-navbar {
+  display: flex;
+  column-gap: 30px;
+  align-items: center;
+
+}
+.link-in-header{
+  color: $colorBlue;
+}
+.header-menu_logo {
+  font-style: 20px;
+}
+.header-contact {
+  color: black;
+  font-size: 30px;
+}
+.header-menu_strong {
+  font-size: 35px;
+  color: $colorBlue;
+}

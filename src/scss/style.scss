@@ -1,0 +1,53 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Roboto;
+}
+a {
+  text-decoration: none;
+}
+ul li {
+  list-style-type: none;
+}
+.container {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // растягиваем на весь экран
+}
+
+.main-content {
+  flex: 1; // тянет основной контент
+}
+
+.footer-bg {
+  background: #f4e9dc;
+  padding: 20px 0;
+}
+
+$colorBlue: #1e4a7b;
+$colorSkin: #f4e9dc;
+@import "./header.scss";
+@import "./About.scss";
+@import "./home.scss";
+@import "./banner.scss";
+@import "./Footer.scss";
+@import "./Contact.scss";
+@import "./Profil.scss";
+@import "./Cotalog.scss";
+@import "./Checkout.scss";
+@import "./Cart.scss";
+@import "./News.scss";
+@import "./Event.scss";

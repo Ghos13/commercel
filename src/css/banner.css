@@ -1,0 +1,17 @@
+.banner {
+  background-image: url(../images/banner.png);
+  height: 520px;
+  background-size: cover;
+  background-position: center;
+}
+
+.banner-content {
+  backdrop-filter: blur(2px);
+  height: 520px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+/*# sourceMappingURL=banner.css.map */

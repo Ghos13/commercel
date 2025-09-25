@@ -1,0 +1,13 @@
+.footer-bg {
+  background: $colorSkin;
+  display: flex;
+  align-items: end;
+  padding: 20px 0px;
+}
+
+.footer-content {
+  display: flex;
+  column-gap: 20px;
+  align-items: end;
+  line-height: 2;
+}
