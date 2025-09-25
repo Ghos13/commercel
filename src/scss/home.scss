@@ -10,7 +10,85 @@
   color: $colorBlue;
  display: flex;
  column-gap: 20px;
+}.products {
+  background: url(../images/banner-cart.png);
+  padding: 25px 0px;
 }
+
+.products-recomend-title {
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.products-recomend-carts {
+  display: flex;
+  flex-wrap: wrap; /* позволяет переносить карточки */
+  gap: 20px;
+  justify-content: center; /* центрируем карточки */
+}
+
+.card {
+  background-color: #fffaf0;
+  border-radius: 10px;
+  padding: 20px;
+  width: 220px; /* базовая ширина */
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  max-width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  color: #1e40af;
+  margin: 10px 0;
+}
+
+.card p {
+  color: #374151;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.buy-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.buy-btn:hover {
+  background-color: #2563eb;
+}
+
+/* 📱 Адаптивность */
+@media (max-width: 1024px) {
+  .card {
+    width: 45%; /* 2 карточки в ряд */
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 100%; /* по одной карточке в ряд */
+  }
+}
+
 
 .card {
   background-color: #fffaf0; /* Light cream background */

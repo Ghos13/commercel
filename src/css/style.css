@@ -42,9 +42,9 @@ body,
   padding: 20px 0;
 }
 
-header {
-  padding: 25px 0px;
-  background: #F4E9DC;
+.header {
+  padding: 20px 0;
+  background: #f4e9dc;
 }
 
 .header_logo {
@@ -57,36 +57,92 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  column-gap: 20px;
-  font-size: 18px;
-  color: black;
-  text-transform: uppercase;
-}
-
-.header-navbar {
-  display: flex;
-  column-gap: 30px;
-  align-items: center;
-}
-
-.link-in-header {
-  color: #1e4a7b;
 }
 
 .header-menu_logo {
-  font-style: 20px;
-}
-
-.header-contact {
-  color: black;
-  font-size: 30px;
+  font-size: 20px;
 }
 
 .header-menu_strong {
   font-size: 35px;
-  color: #1e4a7b;
+  color: #1e40af;
 }
 
+/* Ссылки */
+.header-navbar {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+.link-in-header {
+  color: #1e40af;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.link-in-header:hover {
+  color: #2563eb;
+}
+
+/* 🔹 Бургер */
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.burger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: #1e40af;
+  border-radius: 3px;
+  transition: 0.3s;
+}
+
+.burger.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.burger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.burger.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* 🔹 Адаптив */
+@media (max-width: 768px) {
+  .burger {
+    display: flex;
+  }
+  .header-menu_nav {
+    position: absolute;
+    top: 70px;
+    right: -100%;
+    width: 200px;
+    background: #f4e9dc;
+    transition: right 0.3s ease;
+    border-radius: 10px 0 0 10px;
+  }
+  .header-menu_nav.open {
+    right: 0;
+  }
+  .header-navbar {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+}
 .about {
   max-width: 900px;
   margin: 30px auto;
@@ -135,6 +191,83 @@ header {
   column-gap: 20px;
 }
 
+.products {
+  background: url(../images/banner-cart.png);
+  padding: 25px 0px;
+}
+
+.products-recomend-title {
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.products-recomend-carts {
+  display: flex;
+  flex-wrap: wrap; /* позволяет переносить карточки */
+  gap: 20px;
+  justify-content: center; /* центрируем карточки */
+}
+
+.card {
+  background-color: #fffaf0;
+  border-radius: 10px;
+  padding: 20px;
+  width: 220px; /* базовая ширина */
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  max-width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  color: #1e40af;
+  margin: 10px 0;
+}
+
+.card p {
+  color: #374151;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.buy-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.buy-btn:hover {
+  background-color: #2563eb;
+}
+
+/* 📱 Адаптивность */
+@media (max-width: 1024px) {
+  .card {
+    width: 45%; /* 2 карточки в ряд */
+  }
+}
+@media (max-width: 768px) {
+  .card {
+    width: 100%; /* по одной карточке в ряд */
+  }
+}
 .card {
   background-color: #fffaf0; /* Light cream background */
   border-radius: 10px;
@@ -188,7 +321,6 @@ header {
 }
 
 .banner-content {
-  backdrop-filter: blur(2px);
   height: 520px;
   display: flex;
   text-align: center;

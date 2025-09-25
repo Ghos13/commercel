@@ -6,7 +6,6 @@
 }
 
 .banner-content {
-  backdrop-filter: blur(2px);
   height: 520px;
   display: flex;
   text-align: center;

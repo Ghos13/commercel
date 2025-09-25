@@ -1,17 +1,104 @@
-/* Error: Undefined variable.
- *    ,
- * 28 |   color: $colorBlue;
- *    |          ^^^^^^^^^^
- *    '
- *   src\scss\header.scss 28:10  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a    \2577 \a 28 \2502    color: $colorBlue;\d\a    \2502           ^^^^^^^^^^\a    \2575 \a   src\\scss\\header.scss 28:10  root stylesheet";
+@charset "UTF-8";
+.header {
+  padding: 20px 0;
+  background: #f4e9dc;
 }
+
+.header_logo {
+  width: 100px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.header-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-menu_logo {
+  font-size: 20px;
+}
+
+.header-menu_strong {
+  font-size: 35px;
+  color: #1e40af;
+}
+
+/* Ссылки */
+.header-navbar {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+.link-in-header {
+  color: #1e40af;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.link-in-header:hover {
+  color: #2563eb;
+}
+
+/* 🔹 Бургер */
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.burger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: #1e40af;
+  border-radius: 3px;
+  transition: 0.3s;
+}
+
+.burger.active span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.burger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.burger.active span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* 🔹 Адаптив */
+@media (max-width: 768px) {
+  .burger {
+    display: flex;
+  }
+  .header-menu_nav {
+    position: absolute;
+    top: 70px;
+    right: -100%;
+    width: 200px;
+    background: #f4e9dc;
+    transition: right 0.3s ease;
+    border-radius: 10px 0 0 10px;
+  }
+  .header-menu_nav.open {
+    right: 0;
+  }
+  .header-navbar {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+}
+
+/*# sourceMappingURL=header.css.map */
