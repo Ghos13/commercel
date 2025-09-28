@@ -1,17 +1,183 @@
-/* Error: Undefined variable.
- *    ,
- * 10 |   color: $colorBlue;
- *    |          ^^^^^^^^^^
- *    '
- *   src\scss\home.scss 10:10  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a    \2577 \a 10 \2502    color: $colorBlue;\d\a    \2502           ^^^^^^^^^^\a    \2575 \a   src\\scss\\home.scss 10:10  root stylesheet";
+@charset "UTF-8";
+/* 🔹 БАННЕР */
+.banner {
+  position: relative;
+  background: url("../images/banner-cart.png") center/cover no-repeat;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
 }
+
+/* затемнение */
+.banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+
+/* контент */
+.banner-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: 20px;
+}
+
+.banner-content h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.banner-content p {
+  font-size: 20px;
+  margin-bottom: 25px;
+  color: #f4f4f4;
+}
+
+/* кнопка */
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  padding: 14px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* 🔹 Адаптив */
+@media (max-width: 768px) {
+  .banner {
+    height: 50vh;
+    padding: 20px;
+  }
+  .banner-content h1 {
+    font-size: 28px;
+  }
+  .banner-content p {
+    font-size: 16px;
+  }
+  .btn-primary {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+}
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+/* Рекомендованные товары */
+.section-title {
+  margin: 30px 0;
+  font-size: 24px;
+  text-transform: uppercase;
+}
+
+.products-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  background: #fffaf0;
+  border-radius: 10px;
+  padding: 20px;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+  max-width: 150px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.buy-btn {
+  background: #3b82f6;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.buy-btn:hover {
+  background: #2563eb;
+}
+
+/* Категории */
+.categories-list {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.category {
+  padding: 12px 20px;
+  background: #f4e9dc;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #1e40af;
+  transition: 0.3s;
+}
+
+.category:hover {
+  background: #e0d3c2;
+}
+
+/* Новости */
+.news-preview ul {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+}
+
+.news-preview li {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .banner h1 {
+    font-size: 28px;
+  }
+  .products-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/*# sourceMappingURL=home.css.map */
