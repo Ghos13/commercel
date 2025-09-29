@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+ import Prom from "../../images/gaming-laptops-og-image-C_hhqOLl.webp"
 
 function Cart() {
   const [cart, setCart] = useState([
@@ -8,7 +8,7 @@ function Cart() {
       name: "Ноутбук ASUS", 
       price: 45000, 
       qty: 1, 
-      image: "/images/img1.jpg",
+      image: Prom,
       description: "Мощный ноутбук с Intel i5, 8 ГБ ОЗУ и SSD 512 ГБ. Отлично подходит для работы и игр."
     },
     { 
@@ -16,15 +16,15 @@ function Cart() {
       name: "Кроссовки Nike", 
       price: 12000, 
       qty: 2, 
-      image: "/images/img2.jpg",
+      image: Prom,
       description: "Стильные и удобные кроссовки для ежедневной носки и спорта."
     },
     { 
       id: 3, 
-      name: "Смартфон Samsung", 
+      name: "Смартфон Samsung",  
       price: 32000, 
       qty: 1, 
-      image: "/images/img3.jpg",
+      image: Prom,
       description: "Смартфон с AMOLED экраном, 128 ГБ памяти и камерой 50 МП. Отлично подходит для фото и видео."
     },
   ]);
@@ -88,15 +88,7 @@ function Cart() {
             ))}
           </ul>
 
-          <div className="promo">
-            <input 
-              type="text" 
-              value={promo} 
-              placeholder="Введите промокод" 
-              onChange={(e) => setPromo(e.target.value)} 
-            />
-            <button onClick={applyPromo}>Применить</button>
-          </div>
+         
 
           <div className="summary">
             <p>Товаров: <strong>{totalItems}</strong></p>

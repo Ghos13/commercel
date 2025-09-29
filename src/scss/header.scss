@@ -78,21 +78,21 @@
 @media (max-width: 768px) {
   .burger {
     display: flex;
-
   }
 
   .header-menu_nav {
+    display: none; /* скрыто по умолчанию */
     position: absolute;
     top: 70px;
-    right: -100%;
+    right: 0;
     width: 200px;
     background: #f4e9dc;
-    transition: right 0.3s ease;
     border-radius: 10px 0 0 10px;
+    z-index: 1000;
   }
 
   .header-menu_nav.open {
-    right: 0;
+    display: block; /* показываем только при открытом бургере */
   }
 
   .header-navbar {

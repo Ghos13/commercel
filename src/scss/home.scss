@@ -8,7 +8,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: white;
+  h1{
+    color: white;
+  }
 }
 
 /* затемнение */
@@ -29,6 +31,7 @@
   z-index: 2;
   max-width: 700px;
   padding: 20px;
+  margin: auto;
 }
 
 .banner-content h1 {
