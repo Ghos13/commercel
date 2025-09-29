@@ -19,7 +19,7 @@ export const InfoProvider = ({ children }) => {
         setinfo_Data(import_info_data);
       } catch (error) {
         setLoading(null);
-        alert(`Error ${error}`);
+        console.log(`Error ${error}`);
       }
     };
 
