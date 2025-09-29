@@ -15,7 +15,7 @@ const Footer = () => {
               </div>
               <div>
                 <h4>Контакты</h4>
-                <p>Email: <a href={info_data.gmail}>lpodsnfjkjsodpgvhasdjf</a> </p>
+                <p>Email: <a >{info_data}</a> </p>
                 <p>Тел: +996 555 123 456</p>
               </div>
               <div>
