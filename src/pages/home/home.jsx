@@ -8,9 +8,8 @@ const Home = () => {
   const { info_data, info_loading } = useContext(InfoContext);
 
   if (info_loading == null) return <h1>Error </h1>;
-  
-  if (info_loading) return <h1>Downloading...</h1>;
 
+  if (info_loading) return <h1>Downloading...</h1>;
 
   return (
     <div className="home">

@@ -1,4 +1,7 @@
+import { InfoContext } from "../../providers/info";
+import { useContext } from "react";
 const Footer = () => {
+  const { info_data, } = useContext(InfoContext);
   return (
     <>
       <section className="footer">
@@ -12,12 +15,12 @@ const Footer = () => {
               </div>
               <div>
                 <h4>Контакты</h4>
-                <p>Email: info@it-run.kg</p>
+                <p>Email: <a href={info_data.gmail}>lpodsnfjkjsodpgvhasdjf</a> </p>
                 <p>Тел: +996 555 123 456</p>
               </div>
               <div>
                 <h4>Соцсети</h4>
-                <a href="#">Instagram</a> | <a href="#">Telegram</a>
+                <a href={info_data.instagramm}>Instagram</a> | <a href={info_data.telegramm}>Telegram</a>
               </div>
             </div>
           </div>
