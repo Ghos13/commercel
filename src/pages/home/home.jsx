@@ -1,16 +1,24 @@
 import { Link } from "react-router-dom";
-
+import { InfoContext } from "../../providers/info";
+import { useContext } from "react";
 
 import productImg from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
 
 const Home = () => {
+  const { info_data, info_loading } = useContext(InfoContext);
+
+  if (info_loading == null) return <h1>Error </h1>;
+  
+  if (info_loading) return <h1>Downloading...</h1>;
+
+
   return (
     <div className="home">
       {/* 🔹 Баннер */}
       <section className="banner">
         <div className="container">
           <div className="banner-content">
-            <h1>Добро пожаловать в DTS Shop</h1>
+            <h1>Добро пожаловать в {info_data.title}</h1>
             <p>Лучшие товары по выгодным ценам</p>
             <Link to="/catalog" className="btn-primary">
               Перейти в каталог
@@ -51,10 +59,18 @@ const Home = () => {
         <div className="container">
           <h2 className="section-title">Категории</h2>
           <div className="categories-list">
-            <Link to="/catalog" className="category">Электроника</Link>
-            <Link to="/catalog" className="category">Одежда</Link>
-            <Link to="/catalog" className="category">Бытовая техника</Link>
-            <Link to="/catalog" className="category">Аксессуары</Link>
+            <Link to="/catalog" className="category">
+              Электроника
+            </Link>
+            <Link to="/catalog" className="category">
+              Одежда
+            </Link>
+            <Link to="/catalog" className="category">
+              Бытовая техника
+            </Link>
+            <Link to="/catalog" className="category">
+              Аксессуары
+            </Link>
           </div>
         </div>
       </section>
@@ -64,10 +80,12 @@ const Home = () => {
         <div className="container">
           <h2 className="section-title">О нас</h2>
           <p>
-            Мы — магазин DTS Shop. У нас вы найдете электронику, одежду и технику по доступным ценам. 
-            Доставка по всей стране. 
+            Мы — магазин DTS Shop. У нас вы найдете электронику, одежду и
+            технику по доступным ценам. Доставка по всей стране.
           </p>
-          <Link to="/about" className="btn-secondary">Подробнее</Link>
+          <Link to="/about" className="btn-secondary">
+            Подробнее
+          </Link>
         </div>
       </section>
 
@@ -80,7 +98,9 @@ const Home = () => {
             <li>🚚 Бесплатная доставка при заказе от 5000 сом</li>
             <li>🛍 Новые коллекции одежды</li>
           </ul>
-          <Link to="/news" className="btn-secondary">Все новости</Link>
+          <Link to="/news" className="btn-secondary">
+            Все новости
+          </Link>
         </div>
       </section>
     </div>

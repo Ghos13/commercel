@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./css/style.css";
 import App from "./App";
-import {InfoContext} from "./providers/info.js";
+import {InfoProvider} from "./providers/info.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-<InfoContext>
+<InfoProvider>
     <App />
-</InfoContext>
+</InfoProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

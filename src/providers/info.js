@@ -8,8 +8,9 @@ export const InfoContext = createContext();
 
 
 export const InfoProvider = ({children}) => {
-    const [data,setData] = useState(null);
-    const [loading,setLoading] = useState(true);
+    const [info_data,setinfo_Data] = useState(null);
+    const [info_loading,setLoading] = useState(true);
+
 
     useEffect(() => {
         const func = async () => {
@@ -19,12 +20,12 @@ export const InfoProvider = ({children}) => {
                 if(!res.ok){
                     setLoading(null);
                 }
-                const import_data = await res.json();
+                const import_info_data = await res.json();
                 setLoading(false);
-                setData(import_data);
-                console.log(data);
+                setinfo_Data(import_info_data);
             } catch(error){
-
+                setLoading(null);
+                alert(`Error ${error}`)
             }
         }
 
@@ -32,7 +33,7 @@ export const InfoProvider = ({children}) => {
     },[])
 
     return (
-        <InfoContext.Provider value={{data,loading}}> 
+        <InfoContext.Provider value={{info_data,info_loading}}> 
             {children}
         </InfoContext.Provider>
     )
