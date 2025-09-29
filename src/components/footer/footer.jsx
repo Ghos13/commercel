@@ -2,6 +2,10 @@ import { InfoContext } from "../../providers/info";
 import { useContext } from "react";
 const Footer = () => {
   const { info_data, } = useContext(InfoContext);
+
+  if (info_loading) {
+    return <h1>Anti Ddos guard... (by Aidar) and (WorthlessSoul)</h1>;
+  }
   return (
     <>
       <section className="footer">
