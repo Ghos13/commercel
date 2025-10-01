@@ -16,7 +16,9 @@ const Details = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API}api/products/${id}/`);
+        const res = await fetch(
+          `${process.env.REACT_APP_API}api/products/${id}/`
+        );
         if (!res.ok) {
           setProduct(null);
           setLoading(false);
@@ -39,10 +41,14 @@ const Details = () => {
 
   const addToCart = () => {
     setAdded(true);
-    console.log(`Добавлено в корзину: ${product.name}, количество: ${quantity}`);
+    console.log(
+      `Добавлено в корзину: ${product.name}, количество: ${quantity}`
+    );
   };
 
-  const categoryName = categoryData?.find(cat => cat.id === product.category)?.title || "Неизвестная";
+  const categoryName =
+    categoryData?.find((cat) => cat.id === product.category)?.title ||
+    "Неизвестная";
 
   return (
     <div className="details-page">
@@ -57,7 +63,7 @@ const Details = () => {
           type="number"
           min="1"
           value={quantity}
-          onChange={e => setQuantity(Number(e.target.value))}
+          onChange={(e) => setQuantity(Number(e.target.value))}
         />
       </div>
 

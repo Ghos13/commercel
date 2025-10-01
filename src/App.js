@@ -2,7 +2,8 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { useContext } from "react";
 import { Helmet } from "react-helmet";
-
+import Register from "./pages/auth/Register.jsx";
+import Login from "./pages/auth/login.jsx";
 import Header from "./components/header/header.jsx";
 import Footer from "./components/footer/footer.jsx";
 import Home from "./pages/home/home.jsx";
@@ -48,6 +49,8 @@ function App() {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/news" element={<News />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={<p>Страница не найдена</p>} />
       </Routes>
 

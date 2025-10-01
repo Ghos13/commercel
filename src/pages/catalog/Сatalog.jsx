@@ -68,7 +68,7 @@ function Catalog() {
             <div key={prod.id} className="product-card">
               <img src={prod.cover || Probimg} alt={prod.title} />
               <h3>
-                <Link to={`/detail/${prod.id}`}>{prod.title}</Link>
+                <Link to={`/details/${prod.id}`}>{prod.title}</Link>
               </h3>
               <p>{prod.price} сом</p>
               <button onClick={() => handleAddToCart(prod)}>В корзину</button>

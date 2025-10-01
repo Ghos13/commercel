@@ -1,4 +1,4 @@
-.login-page {
+.register-page {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,7 +7,7 @@
   font-family: Arial, sans-serif;
 }
 
-.login-form {
+.register-form {
   background: #fff;
   padding: 30px 40px;
   border-radius: 12px;
@@ -17,21 +17,21 @@
   flex-direction: column;
 }
 
-.login-form h2 {
+.register-form h2 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
 }
 
-.login-form label {
+.register-form label {
   font-size: 14px;
   margin-bottom: 5px;
   color: #555;
 }
 
-.login-form input[type="email"],
-.login-form input[type="password"],
-.login-form input[type="text"] {
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"] {
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
@@ -40,53 +40,34 @@
   transition: 0.3s;
 }
 
-.login-form input:focus {
+.register-form input:focus {
   border-color: #4facfe;
   outline: none;
   box-shadow: 0 0 5px rgba(79,172,254,0.5);
 }
 
-.password-wrapper {
+.register-form .agree {
   display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.password-wrapper .show-pass {
-  position: absolute;
-  right: 10px;
-  background: none;
-  border: none;
-  color: #4facfe;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.remember-forgot {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
   font-size: 13px;
 }
 
-.remember-forgot label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.register-form .agree input {
+  margin-right: 6px;
 }
 
-.remember-forgot a {
+.register-form .agree a {
   color: #4facfe;
   text-decoration: none;
   transition: 0.3s;
 }
 
-.remember-forgot a:hover {
+.register-form .agree a:hover {
   text-decoration: underline;
 }
 
-.login-form button[type="submit"] {
+.register-form button[type="submit"] {
   background: #4facfe;
   color: white;
   padding: 12px;
@@ -97,16 +78,16 @@
   transition: 0.3s;
 }
 
-.login-form button[type="submit"]:hover {
+.register-form button[type="submit"]:hover {
   background: #00c6ff;
 }
 
-.login-form button[disabled] {
+.register-form button[disabled] {
   background: #aaa;
   cursor: not-allowed;
 }
 
-.login-form .error {
+.register-form .error {
   background: #ffdddd;
   color: #d9534f;
   padding: 8px;
@@ -116,17 +97,17 @@
   text-align: center;
 }
 
-.login-form p {
+.register-form p {
   text-align: center;
   margin-top: 15px;
   font-size: 14px;
 }
 
-.login-form p a {
+.register-form p a {
   color: #4facfe;
   text-decoration: none;
 }
 
-.login-form p a:hover {
+.register-form p a:hover {
   text-decoration: underline;
 }

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -64,6 +63,10 @@ const Header = () => {
               </li>
             </ul>
           </nav>
+          <Link to="/login">
+            login/
+            <Link to="/register"> singin</Link>
+          </Link>
         </div>
       </div>
     </header>
