@@ -3,11 +3,17 @@ import ReactDOM from "react-dom/client";
 import "./css/style.css";
 import App from "./App";
 import {InfoProvider} from "./providers/info.js";
+import {CategoryProvider} from "./providers/category.js";
+import { BrandProvider } from "./providers/brand.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 <InfoProvider>
-    <App />
+    <CategoryProvider>
+        <BrandProvider>
+            <App />
+        </BrandProvider>
+    </CategoryProvider>
 </InfoProvider>
 );
 
