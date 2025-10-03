@@ -1,41 +1,87 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
-
-const Login = () => {
-  const navigate = useNavigate();
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const [googleRedirect, setGoogleRedirect] = useState(null);
 
-    // Простая локальная валидация
-    if (!email || !password) {
-      setError("Пожалуйста, заполните все поля");
-      return;
-    }
+  // Получаем redirect_url с бэка при загрузке компонента
+  useEffect(() => {
+    const fetchGoogleRedirect = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API}accounts/google/login/`, {
+          method: "GET",
+          credentials: "include",
+        });
 
-    setLoading(true);
-    setError("");
-
-    // Эмуляция запроса к серверу
-    setTimeout(() => {
-      if (email === "user@example.com" && password === "123456") {
-        setError("");
-        if (rememberMe) {
-          localStorage.setItem("user", JSON.stringify({ email }));
+        if (!res.ok) {
+          throw new Error("Ошибка при получении URL для Google");
         }
-        navigate("/catalog");
-      } else {
-        setError("Неверный email или пароль");
+
+        const data = await res.json();
+        setGoogleRedirect(data.redirect_url); 
+      } catch (err) {
+        console.error(err);
       }
-      setLoading(false);
-    }, 1000);
+    };
+
+    fetchGoogleRedirect();
+  }, []);
+
+  const handleLogin = async (e) => {
+  e.preventDefault();
+
+  if (!email || !password) {
+    setError("Пожалуйста, заполните все поля");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+
+  try {
+    // создаём form-urlencoded данные
+    const formData = new URLSearchParams();
+    formData.append("username", email); // можно username или email
+    formData.append("password", password);
+
+    const res = await fetch(`${process.env.REACT_APP_API}accounts/login/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      credentials: "include",
+      body: formData.toString(),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log("Успешный вход:", data);
+      // здесь можно редиректить на главную страницу
+    } else if (res.status === 401) {
+      setError("Неверный логин или пароль");
+    } else {
+      setError("Ошибка сервера");
+    }
+  } catch (err) {
+    console.error(err);
+    setError("Ошибка сети");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  const handleGoogleLogin = () => {
+    if (googleRedirect) {
+      window.location.href = googleRedirect; // редиректим на Google
+    } else {
+      alert("URL для Google авторизации недоступен");
+    }
   };
 
   return (
@@ -73,19 +119,20 @@ const Login = () => {
         </div>
 
         <div className="remember-forgot">
-          <label>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
-            />
-            Запомнить меня
-          </label>
           <Link to="/forgot">Забыли пароль?</Link>
         </div>
 
         <button type="submit" disabled={loading}>
           {loading ? "Вход..." : "Войти"}
+        </button>
+
+        {/* Кнопка Google */}
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="google-login"
+        >
+          Войти через Google
         </button>
 
         <p>
@@ -94,6 +141,6 @@ const Login = () => {
       </form>
     </div>
   );
-};
+}
 
-export default Login;
+

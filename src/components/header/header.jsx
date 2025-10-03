@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../providers/auth";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const {userData : authData,userLoading : authLoading} = useContext(AuthContext);
 
+    const logoutSubmit = async () => {
+        window.location.href = `${process.env.REACT_APP_API}/accounts/logout/`
+    }
   return (
     <header className="header">
       <div className="container">
@@ -36,11 +41,15 @@ const Header = () => {
                   каталог
                 </Link>
               </li>
+
+              {authData &&
               <li>
                 <Link className="link-in-header" to="/cart">
                   себет
                 </Link>
               </li>
+              }
+              
               <li>
                 <Link className="link-in-header" to="/about">
                   биз тууралуу
@@ -63,10 +72,30 @@ const Header = () => {
               </li>
             </ul>
           </nav>
-          <Link to="/login">
-            login/
-            <Link to="/register"> singin</Link>
-          </Link>
+
+          {/* LOGIN / SIGNIN */}
+          <div className="auth-links">
+            {
+            authData ?
+                <>
+                <Link className="link-in-header" to="/profile">
+                  Profile
+                </Link>               
+                <button onClick={() => logoutSubmit()}> Logout</button>
+                </>
+            :
+            <>
+            <Link className="link-in-header" to="/login">
+              login
+            </Link>
+            <span>/</span>
+            <Link className="link-in-header" to="/register">
+              signin
+            </Link>
+
+            </>
+            }
+          </div>
         </div>
       </div>
     </header>

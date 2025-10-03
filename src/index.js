@@ -5,13 +5,16 @@ import App from "./App";
 import {InfoProvider} from "./providers/info.js";
 import {CategoryProvider} from "./providers/category.js";
 import { BrandProvider } from "./providers/brand.js";
+import {AuthProvider} from "./providers/auth.js"
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 <InfoProvider>
     <CategoryProvider>
         <BrandProvider>
-            <App />
+            <AuthProvider>
+                <App />
+            </AuthProvider>
         </BrandProvider>
     </CategoryProvider>
 </InfoProvider>

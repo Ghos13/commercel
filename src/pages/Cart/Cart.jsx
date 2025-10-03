@@ -1,59 +1,26 @@
-import { useState } from "react";
- import Prom from "../../images/gaming-laptops-og-image-C_hhqOLl.webp"
+import { useState,useContext } from "react";
+import Prom from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
+import { AuthContext  } from "../../providers/auth.js";
 
 function Cart() {
-  const [cart, setCart] = useState([
-    { 
-      id: 1, 
-      name: "Ноутбук ASUS", 
-      price: 45000, 
-      qty: 1, 
-      image: Prom,
-      description: "Мощный ноутбук с Intel i5, 8 ГБ ОЗУ и SSD 512 ГБ. Отлично подходит для работы и игр."
-    },
-    { 
-      id: 2, 
-      name: "Кроссовки Nike", 
-      price: 12000, 
-      qty: 2, 
-      image: Prom,
-      description: "Стильные и удобные кроссовки для ежедневной носки и спорта."
-    },
-    { 
-      id: 3, 
-      name: "Смартфон Samsung",  
-      price: 32000, 
-      qty: 1, 
-      image: Prom,
-      description: "Смартфон с AMOLED экраном, 128 ГБ памяти и камерой 50 МП. Отлично подходит для фото и видео."
-    },
-  ]);
+  const {cart,setCart,userData, setUserData} = useContext(AuthContext);
 
   const [promo, setPromo] = useState("");
   const [discount, setDiscount] = useState(0);
 
   const updateQty = (id, qty) => {
-    setCart(cart.map(item => item.id === id ? { ...item, qty: Math.max(1, qty) } : item));
+    setCart(cart.map(item => item.id === id ? { ...item, count: Math.max(1, qty) } : item));
   };
 
   const removeItem = (id) => {
     setCart(cart.filter(item => item.id !== id));
   };
 
-  const applyPromo = () => {
-    if (promo.toLowerCase() === "sale10") {
-      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-      setDiscount(subtotal * 0.1);
-      alert("Промокод применен! Скидка 10%");
-    } else {
-      setDiscount(0);
-      alert("Неверный промокод");
-    }
-  };
+  
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.count, 0);
   const total = subtotal - discount;
-  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  const totalItems = cart.reduce((sum, item) => sum + item.count, 0);
 
   return (
     <div className="cart-page">
@@ -72,16 +39,16 @@ function Cart() {
                   <span className="description">{item.description}</span>
                   <span className="unit-price">{item.price} сом / шт</span>
                   <div className="qty-control">
-                    <button onClick={() => updateQty(item.id, item.qty - 1)}>-</button>
+                    <button onClick={() => updateQty(item.id, item.count - 1)}>-</button>
                     <input 
                       type="number" 
                       value={item.qty} 
                       min="1" 
                       onChange={(e) => updateQty(item.id, +e.target.value)} 
                     />
-                    <button onClick={() => updateQty(item.id, item.qty + 1)}>+</button>
+                    <button onClick={() => updateQty(item.id, item.count + 1)}>+</button>
                   </div>
-                  <span className="price">{item.price * item.qty} сом</span>
+                  <span className="price">{item.price * item.count} сом</span>
                 </div>
                 <button className="remove-btn" onClick={() => removeItem(item.id)}>✖</button>
               </li>

@@ -33,12 +33,37 @@ const Register = () => {
     setLoading(true);
     setError("");
 
-    // Эмуляция регистрации
-    setTimeout(() => {
+    try {
+      const data = {
+        username: name,
+        email: email,
+        password: password
+      };
+      const res = await fetch(`${process.env.REACT_APP_API}accounts/signup/`, {
+        method: "POST",
+        credentials: "include",   
+        headers: {"Content-type":"application/x-www-form-urlencoded"},
+        body: new URLSearchParams({
+            username: data.username,
+            password: data.password,
+            email: data.email
+        }).toString()
+      });
+    
+      const result = await res.json();
+    
+      if (!res.ok) {
+        setError(result.error || "Ошибка регистрации");
+      } else {
+        navigate("/verify");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Сервер недоступен");
+    } finally {
       setLoading(false);
-      localStorage.setItem("user", JSON.stringify({ name, email }));
-      navigate("/catalog");
-    }, 1000);
+    }
+
   };
 
   return (

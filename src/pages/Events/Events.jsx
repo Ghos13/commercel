@@ -28,7 +28,7 @@ function Events() {
   ];
 
   return (
-    <div className="events">
+    <div className="news-banner">
       <h1>Иш-чаралар</h1>
       <ul className="events-list">
         {eventsList.map(event => (
