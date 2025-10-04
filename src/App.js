@@ -13,7 +13,7 @@ import Cart from "./pages/Cart/Cart.jsx";
 import About from "./pages/About/About.jsx";
 import Contacts from "./pages/Contacts/Contacts.jsx";
 import News from "./pages/News/News.jsx";
-import Events from "./pages/Events/Events.jsx";
+
 import Reset from "./pages/auth/Reset.jsx";
 
 import { InfoContext } from "./providers/info.js";
@@ -50,7 +50,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/news" element={<News />} />
-        <Route path="/events" element={<Events />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<Reset />} />

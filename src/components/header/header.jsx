@@ -65,11 +65,7 @@ const Header = () => {
                   жаңылыктар
                 </Link>
               </li>
-              <li>
-                <Link className="link-in-header" to="/events">
-                  иш-чаралар
-                </Link>
-              </li>
+              
             </ul>
           </nav>
 

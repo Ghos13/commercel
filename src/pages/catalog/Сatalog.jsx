@@ -14,75 +14,83 @@ function Catalog() {
   const [loadingAddToCart, setLoadingAddToCart] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState([]);
-  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const productsPerPage = 6;
 
-  // 🔹 Мемоизация fetchProducts
-  const fetchProducts = useCallback(async (page = 1, query = "", categories = []) => {
-    if (!userData) {
-      setError("Пожалуйста, войдите в аккаунт для поиска товаров");
-      setLoading(false);
-      return;
-    }
+  const [formData,setFormData] = useState({
+    page:1,q:"",min_price:0,max_price:3000,on_sale:false,new:false,categories:[],brands:[]
+  });
 
-    setLoading(true);
-    setError(null);
-    try {
-      let url = `${process.env.REACT_APP_API}api/products/?page=${page}`;
-      if (query) url += `&q=${encodeURIComponent(query)}`;
-      if (categories.length > 0) url += `&category=${categories.join(",")}`;
+  const changeSelectedCategory = (id) => {
+    setFormData((prev) => ({
+      ...prev,
+      categories: prev.categories.includes(id)
+        ? prev.categories.filter((c) => c !== id)
+        : [...prev.categories, id],
+    }));
+  };
+  
+  const changeSelectedBrand = (id) => {
+    setFormData((prev) => ({
+      ...prev,
+      brands: prev.brands.includes(id)
+        ? prev.brands.filter((b) => b !== id)
+        : [...prev.brands, id],
+    }));
+  };
+  
+  const handleSearch = (e) => {
+    setFormData((prev) => ({ ...prev, q: e.target.value, page: 1 }));
+  };
+  
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: checked, page: 1 }));
+  };
 
-      console.log("Fetching products with URL:", url); // Для отладки
 
-      const res = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          ...(userData.token && { Authorization: `Bearer ${userData.token}` }),
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error(`Ошибка ${res.status}: ${res.statusText}`);
+  useEffect(() => {
+    const req = async () => {
+      try {
+        // Создаем объект query-параметров из formData
+        const params = new URLSearchParams();
+        formData.page = currentPage;
+  
+        if (formData.categories.length > 0) {
+          params.append("category", formData.categories.join(","));
+        }
+        
+        // бренды
+        if (formData.brands.length > 0) {
+          params.append("brand", formData.brands.join(","));
+        }
+        
+        // остальные параметры
+        ["q", "min_price", "max_price", "on_sale", "new", "page"].forEach((key) => {
+          if (formData[key] !== "" && formData[key] !== null && formData[key] !== undefined) {
+            params.append(key, formData[key]);
+          }
+        });
+  
+        const res = await fetch(`${process.env.REACT_APP_API}api/products/?${params.toString()}`);
+         
+        if (!res.ok) {
+          console.log(res.status);
+        } else {
+          const data = await res.json();
+          setProducts(data.results);
+          console.log(data)   
+          setTotalPages(data.num_pages);
+        }
+      } catch (er) {
+        console.log(er);
       }
-
-      const data = await res.json();
-      setProducts(data.results || []);
-      setTotalPages(data.num_pages || 1);
-    } catch (err) {
-      console.error("Ошибка при загрузке товаров:", err);
-      setError("Не удалось загрузить товары. Попробуйте снова позже.");
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [userData]);
-
-  // 🔎 Debounce для поиска
-  useEffect(() => {
-    if (!userData) return; // Пропускаем, если пользователь не авторизован
-
-    const delayDebounce = setTimeout(() => {
-      console.log("Calling fetchProducts with:", { currentPage, searchTerm, selectedCategory }); // Для отладки
-      fetchProducts(currentPage, searchTerm, selectedCategory);
-    }, 300);
-
-    return () => clearTimeout(delayDebounce);
-  }, [currentPage, searchTerm, selectedCategory, fetchProducts]);
-
-  // 🔹 Первоначальная загрузка
-  useEffect(() => {
-    if (userData) {
-      fetchProducts(1, "", []); // Загружаем товары при монтировании
-    }
-  }, [fetchProducts]);
-
-  // 🔹 Добавление товара в корзину
+    };
+  
+    req();
+  }, [formData,currentPage]);
+ 
   const handleAddToCart = async (product) => {
     setLoadingAddToCart(true);
     try {
@@ -105,7 +113,11 @@ function Catalog() {
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(`Ошибка при добавлении в корзину: ${err.message || "Неизвестная ошибка"}`);
+        throw new Error(
+          `Ошибка при добавлении в корзину: ${
+            err.message || "Неизвестная ошибка"
+          }`
+        );
       }
 
       const data = await res.json();
@@ -120,70 +132,101 @@ function Catalog() {
       });
     } catch (err) {
       console.error("Сетевая ошибка:", err);
-      setError(err.message);
     } finally {
       setLoadingAddToCart(false);
     }
   };
 
-  const changeSelectedCategory = (id) => {
-    setSelectedCategory((prev) =>
-      prev.includes(id) ? prev.filter((catId) => catId !== id) : [...prev, id]
-    );
-    setCurrentPage(1);
-  };
-
   return (
     <div className="catalog">
-      {error && <p className="error">{error}</p>}
+     
 
       {categoryLoading ? (
         <Spinner text="Загрузка категорий..." />
-      ) : (
-        <div className="category-buttons">
-          {categoryData.map((cat) => (
-            <button
-              key={cat.id}
-              className={
-                selectedCategory.includes(cat.id)
-                  ? "category_is_selected"
-                  : "category_no_selected"
-              }
-              onClick={() => changeSelectedCategory(cat.id)}
-            >
-              {cat.title}
-            </button>
-          ))}
-        </div>
+         ) : (
+           <div className="category-buttons">
+             {categoryData.map((cat) => (
+               <button
+                 key={cat.id}
+                 className={formData.categories.includes(cat.id) ? "category_is_selected" : "category_no_selected"}
+                 onClick={() => changeSelectedCategory(cat.id)}
+               >
+                 {cat.title}
+               </button>
+             ))}
+            </div>
+
+      )}
+   
+      {brandLoading ? (
+           <Spinner text="Загрузка брендов..." />
+         ) : (
+              <div className="brand-buttons">
+                {brandData.map((brand) => (
+                  <button
+                    key={brand.id}
+                    className={formData.brands.includes(brand.id) ? "brand_is_selected" : "brand_no_selected"}
+                    onClick={() => changeSelectedBrand(brand.id)}
+                  >
+                    {brand.title}
+                  </button>
+                ))}
+              </div>
       )}
 
-      {brandLoading ? (
-        <Spinner text="Загрузка брендов..." />
-      ) : (
-        <div className="brand-buttons">
-          {brandData.map((brand) => (
-            <button key={brand.id}>{brand.title}</button>
-          ))}
-        </div>
-      )}
+      <div className="filters-checkbox">
+        <label>
+          <input
+            type="checkbox"
+            name="on_sale"
+            checked={formData.on_sale}
+            onChange={handleCheckboxChange}
+          />
+          Скидка
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="new"
+            checked={formData.new}
+            onChange={handleCheckboxChange}
+          />
+          Новинки
+        </label>
+      </div>
+
+
 
       <h1>Каталог</h1>
 
-      {userData ? (
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Поиск товара..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-          />
-        </div>
-      ) : (
-        <p>Пожалуйста, войдите в аккаунт для поиска товаров</p>
-      )}
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Поиск товара..."
+          value={formData.q}
+          onChange={handleSearch}
+        />
+
+
+        <input 
+           type="number"
+           placeholder="min_price"
+           value={formData.min_price}
+           onChange={handleSearch}
+        />
+
+        <input 
+           type="number"
+           placeholder="max_price"
+           value={formData.max_price}
+           onChange={handleSearch}
+        
+        />
+      
+      </div>
+
+
+
 
       <div className="products">
         {loading ? (
@@ -191,7 +234,7 @@ function Catalog() {
         ) : products.length > 0 ? (
           products.map((prod) => (
             <div key={prod.id} className="product-card">
-              <img src={prod.image || Probimg} alt={prod.title} />
+              <img src={prod.cover || Probimg} alt={prod.title} />
               <h3>
                 <Link to={`/details/${prod.id}`}>{prod.title}</Link>
               </h3>
