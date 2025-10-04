@@ -21,6 +21,26 @@ body,
   height: 100%;
   margin: 0;
 }
+.ddos-guard {
+  font-family: "Orbitron", sans-serif;
+  font-size: 2.8rem;
+  text-align: center;
+  color: #478085;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 80px;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+/* Простая и быстрая анимация свечения */
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #000000, 0 0 10px #00eaff;
+  }
+  to {
+    text-shadow: 0 0 15px #00eaff, 0 0 25px #0095ff;
+  }
+}
 
 .app {
   display: flex;
@@ -265,3 +285,5 @@ $colorSkin: #f4e9dc;
 @import "./Details.scss";
 @import "Login.scss";
 @import "register.scss";
+@import "NotFound.scss";
+@import "spiner.scss";

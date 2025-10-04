@@ -41,7 +41,13 @@
 .link-in-header:hover {
   color: #2563eb;
 }
-
+.longout-btn {
+  padding: 12px 23px;
+  border-radius: 20px;
+  background:#1e40af;
+  color: white;
+  border: 1px solid gray;
+}
 /* 🔹 Бургер */
 .burger {
   display: none;

@@ -1,26 +1,86 @@
-import { useState,useContext } from "react";
-import Prom from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
-import { AuthContext  } from "../../providers/auth.js";
-
+import { useState, useContext } from "react";
+import { AuthContext } from "../../providers/auth.js";
+import Spinner from "../Spinner.jsx/Spinner.jsx";
 function Cart() {
-  const {cart,setCart,userData, setUserData} = useContext(AuthContext);
+  const { cart, setCart, userData, setUserData } = useContext(AuthContext);
 
-  const [promo, setPromo] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
-  const updateQty = (id, qty) => {
-    setCart(cart.map(item => item.id === id ? { ...item, count: Math.max(1, qty) } : item));
+  const updateQty = async (id, qty) => {
+    try {
+      setLoadingUpdate(true); // старт загрузки
+      let operation;
+
+      if (qty === "inc" || qty === "dec") {
+        operation = qty;
+      } else {
+        const numberQty = Math.max(1, Number(qty));
+        operation = numberQty.toString();
+      }
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API}accounts/bucket/${id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ operation }),
+        }
+      );
+
+      if (response.status === 200) {
+        const updatedItem = await response.json();
+        setCart(
+          cart.map((item) =>
+            item.id === id ? { ...item, count: updatedItem.count } : item
+          )
+        );
+      } else if (response.status === 204) {
+        setCart(cart.filter((item) => item.id !== id));
+      } else {
+        console.error("Ошибка при обновлении количества:", response.status);
+      }
+    } catch (error) {
+      console.error("Ошибка сети:", error);
+    } finally {
+      setLoadingUpdate(false); // конец загрузки
+    }
   };
 
-  const removeItem = (id) => {
-    setCart(cart.filter(item => item.id !== id));
-  };
+  const removeItem = async (id) => {
+    try {
+      setLoadingDelete(true); // старт загрузки
+      const response = await fetch(
+        `${process.env.REACT_APP_API}accounts/bucket/${id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
 
-  
+      if (response.status === 204) {
+        setCart(cart.filter((item) => item.id !== id));
+      } else {
+        console.error("Ошибка при удалении товара:", response.status);
+      }
+    } catch (error) {
+      console.error("Ошибка сети:", error);
+    } finally {
+      setLoadingDelete(false); // конец загрузки
+    }
+  };
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.count, 0);
   const total = subtotal - discount;
   const totalItems = cart.reduce((sum, item) => sum + item.count, 0);
+
+  // Если идет любая загрузка
+  if (loadingUpdate || loadingDelete) {
+    return <Spinner text={"Загрузка товара..."} />;
+  }
 
   return (
     <div className="cart-page">
@@ -31,7 +91,7 @@ function Cart() {
       ) : (
         <div className="cart-container">
           <ul className="cart-list">
-            {cart.map(item => (
+            {cart.map((item) => (
               <li key={item.id} className="cart-item">
                 <img src={item.image} alt={item.name} className="cart-image" />
                 <div className="cart-details">
@@ -39,32 +99,58 @@ function Cart() {
                   <span className="description">{item.description}</span>
                   <span className="unit-price">{item.price} сом / шт</span>
                   <div className="qty-control">
-                    <button onClick={() => updateQty(item.id, item.count - 1)}>-</button>
-                    <input 
-                      type="number" 
-                      value={item.qty} 
-                      min="1" 
-                      onChange={(e) => updateQty(item.id, +e.target.value)} 
+                    <button
+                      disabled={loadingUpdate}
+                      onClick={() => updateQty(item.id, "dec")}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      value={item.count}
+                      min="1"
+                      disabled={loadingUpdate}
+                      onChange={(e) => updateQty(item.id, +e.target.value)}
                     />
-                    <button onClick={() => updateQty(item.id, item.count + 1)}>+</button>
+                    <button
+                      disabled={loadingUpdate}
+                      onClick={() => updateQty(item.id, "inc")}
+                    >
+                      +
+                    </button>
                   </div>
                   <span className="price">{item.price * item.count} сом</span>
                 </div>
-                <button className="remove-btn" onClick={() => removeItem(item.id)}>✖</button>
+                <button
+                  disabled={loadingDelete}
+                  className="remove-btn"
+                  onClick={() => removeItem(item.id)}
+                >
+                  ✖
+                </button>
               </li>
             ))}
           </ul>
 
-         
-
           <div className="summary">
-            <p>Товаров: <strong>{totalItems}</strong></p>
-            <p>Сумма без скидки: <strong>{subtotal} сом</strong></p>
-            <p>Скидка: <strong>{discount} сом</strong></p>
-            <p className="total">Итого: <strong>{total} сом</strong></p>
+            <p>
+              Товаров: <strong>{totalItems}</strong>
+            </p>
+            <p>
+              Сумма без скидки: <strong>{subtotal} сом</strong>
+            </p>
+            <p>
+              Скидка: <strong>{discount} сом</strong>
+            </p>
+            <p className="total">
+              Итого: <strong>{total} сом</strong>
+            </p>
           </div>
 
-          <button className="checkout-btn" onClick={() => alert("Переход к оплате")}>
+          <button
+            className="checkout-btn"
+            onClick={() => alert("Переход к оплате")}
+          >
             ✅ Перейти к оплате
           </button>
         </div>

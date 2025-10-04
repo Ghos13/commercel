@@ -1,42 +1,42 @@
 import { Link } from "react-router-dom";
 import { InfoContext } from "../../providers/info";
 import { CategoryContext } from "../../providers/category";
-import { useContext, useEffect,useState } from "react";
-
+import { useContext, useEffect, useState } from "react";
+import Spinner from "../Spinner.jsx/Spinner";
 import productImg from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
 
 const Home = () => {
   const { info_data, info_loading } = useContext(InfoContext);
-  const {categoryData,categoryLoading} = useContext(CategoryContext);
-  
-  const [recommend_products,setRProduct] = useState([]);
-  const [loading,setLoading] = useState(true);
+  const { categoryData, categoryLoading } = useContext(CategoryContext);
+
+  const [recommend_products, setRProduct] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const req = async () => {
-      try{
-        const res = await fetch(`${process.env.REACT_APP_API}api/products/?page_size=4`);
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API}api/products/?page_size=4`
+        );
 
-        if(!res.ok){
+        if (!res.ok) {
           console.log(res.status);
         }
 
         const data = await res.json();
         setLoading(false);
         setRProduct(data.results);
-
-      } catch(er){
-        console.log(er)
+      } catch (er) {
+        console.log(er);
       }
-    }
+    };
 
     req();
-  },[])
-
+  }, []);
 
   if (info_loading == null) return <h1>Error </h1>;
 
-  if (info_loading) return <h1>Downloading...</h1>;
+  if (info_loading) return <Spinner text={"Загрузка категорий..."} />;
 
   return (
     <div className="home">
@@ -58,24 +58,18 @@ const Home = () => {
         <div className="container">
           <h2 className="section-title">Рекомендованные товары</h2>
           <div className="products-grid">
-
-            {
-            loading ? <h1>Download..</h1> 
-            :
-            (
-            recommend_products.map(elem => 
-            (
-            <div className="card" key={elem.id}>
-              <img src={elem.cover} alt="Товар" />
-              <h3>{elem.title}</h3>
-              <p>{elem.price} сом</p>
-              <button className="buy-btn">Сатып алуу</button>
-            </div>
-            ))
-            )
-            }
-
-
+            {loading ? (
+              <Spinner text={"Загрузка товаров..."} />
+            ) : (
+              recommend_products.map((elem) => (
+                <div className="card" key={elem.id}>
+                  <img src={elem.cover} alt="Товар" />
+                  <h3>{elem.title}</h3>
+                  <p>{elem.price} сом</p>
+                  <button className="buy-btn">Сатып алуу</button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -85,19 +79,15 @@ const Home = () => {
         <div className="container">
           <h2 className="section-title">Категории</h2>
           <div className="categories-list">
-            {
-              categoryLoading ? <h1>Download...</h1>  
-              : (
-                
-                  categoryData.map(elem => (
-                      <Link to="/catalog" className="category">
-                        {elem.title}
-                      </Link>
-                  ))
-                
-              )
-            }
-
+            {categoryLoading ? (
+              <Spinner text={"Загрузка категорий..."} />
+            ) : (
+              categoryData.map((elem) => (
+                <Link to="/catalog" className="category">
+                  {elem.title}
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -122,7 +112,6 @@ const Home = () => {
           <h2 className="section-title">Новости</h2>
           <ul>
             <li>🎉 Скидки до 50% на электронику</li>
-            <li>🚚 Бесплатная доставка при заказе от 5000 сом</li>
             <li>🛍 Новые коллекции одежды</li>
           </ul>
           <Link to="/news" className="btn-secondary">

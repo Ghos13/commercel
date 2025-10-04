@@ -15,15 +15,15 @@ import Contacts from "./pages/Contacts/Contacts.jsx";
 import News from "./pages/News/News.jsx";
 import Events from "./pages/Events/Events.jsx";
 import Reset from "./pages/auth/Reset.jsx";
-import Profile from "./pages/Profile/Profile.jsx";
 
 import { InfoContext } from "./providers/info.js";
+import NotFound from "./pages/NotFound.jsx/NotFound.jsx";
 
 function App() {
   const { info_data, info_loading } = useContext(InfoContext);
 
   if (info_loading) {
-    return <h1>Anti Ddos guard... (by Aidar) and (WorthlessSoul)</h1>;
+    return <h1 className="ddos-guard">Anti Ddos guard... (by Grok) and (WorthlessSoul)</h1>;
   }
 
   return (
@@ -54,8 +54,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<Reset />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="*" element={<p>Страница не найдена</p>} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
 
       <Footer />

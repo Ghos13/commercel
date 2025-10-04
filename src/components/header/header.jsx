@@ -77,22 +77,14 @@ const Header = () => {
           <div className="auth-links">
             {
             authData ?
-                <>
-                <Link className="link-in-header" to="/profile">
-                  Profile
-                </Link>               
-                <button onClick={() => logoutSubmit()}> Logout</button>
+                <>             
+                <button className="longout-btn" onClick={() => logoutSubmit()}> Logout</button>
                 </>
             :
             <>
             <Link className="link-in-header" to="/login">
               login
             </Link>
-            <span>/</span>
-            <Link className="link-in-header" to="/register">
-              signin
-            </Link>
-
             </>
             }
           </div>

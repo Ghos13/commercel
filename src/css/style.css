@@ -27,6 +27,26 @@ body,
   margin: 0;
 }
 
+.ddos-guard {
+  font-family: "Orbitron", sans-serif;
+  font-size: 2.8rem;
+  text-align: center;
+  color: #478085;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 80px;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+/* Простая и быстрая анимация свечения */
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #000000, 0 0 10px #00eaff;
+  }
+  to {
+    text-shadow: 0 0 15px #00eaff, 0 0 25px #0095ff;
+  }
+}
 .app {
   display: flex;
   flex-direction: column;
@@ -294,6 +314,14 @@ body {
 
 .link-in-header:hover {
   color: #2563eb;
+}
+
+.longout-btn {
+  padding: 12px 23px;
+  border-radius: 20px;
+  background: #1e40af;
+  color: white;
+  border: 1px solid gray;
 }
 
 /* 🔹 Бургер */
@@ -1003,6 +1031,52 @@ body {
   color: #888;
 }
 
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* обычная (не выбрана) */
+.category_no_selected {
+  background: #555;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.category_no_selected:hover {
+  background: #666;
+}
+
+/* выбрана — зелёная */
+.category_is_selected {
+  background: #2ecc71;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.6);
+  transform: scale(1.05);
+}
+
+/* 📱 адаптив */
+@media (max-width: 600px) {
+  .category-buttons {
+    justify-content: center;
+  }
+  .category_no_selected,
+  .category_is_selected {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+  }
+}
 .checkout {
   max-width: 900px;
   margin: 30px auto;
@@ -1619,7 +1693,8 @@ h2 {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  background-image: url(../images/banner-cart.png);
+  background-size: cover;
   font-family: Arial, sans-serif;
 }
 
@@ -1747,6 +1822,57 @@ h2 {
   text-decoration: underline;
 }
 
+.google-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px 0;
+  background: #fff;
+  color: #444;
+  font-weight: 600;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Добавим иконку Google через псевдоэлемент */
+.google-login::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: url("https://www.svgrepo.com/show/475656/google-color.svg") no-repeat center center;
+  background-size: contain;
+}
+
+/* Эффект наведения */
+.google-login:hover {
+  background: #f1f1f1;
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(0, 234, 255, 0.3);
+}
+
+/* При нажатии */
+.google-login:active {
+  transform: scale(0.98);
+}
+
+/* 📱 Адаптив */
+@media (max-width: 480px) {
+  .google-login {
+    font-size: 0.9rem;
+    padding: 9px 0;
+  }
+  .google-login::before {
+    width: 18px;
+    height: 18px;
+  }
+}
 .register-page {
   display: flex;
   justify-content: center;
@@ -1859,6 +1985,113 @@ h2 {
 
 .register-form p a:hover {
   text-decoration: underline;
+}
+
+.notfound {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #000;
+  color: #00eaff;
+  font-family: "Orbitron", sans-serif;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.notfound h1 {
+  font-size: 6rem;
+  margin: 0;
+  text-shadow: 0 0 15px #00eaff;
+}
+
+.notfound p {
+  font-size: 1.3rem;
+  margin: 10px 0 20px;
+  color: #b3e8ff;
+}
+
+.home-link {
+  padding: 10px 25px;
+  border: 2px solid #00eaff;
+  border-radius: 6px;
+  color: #00eaff;
+  text-decoration: none;
+  transition: 0.3s;
+  font-weight: 500;
+}
+
+.home-link:hover {
+  background: #00eaff;
+  color: #000;
+}
+
+/* 📱 Адаптив под телефоны */
+@media (max-width: 768px) {
+  .notfound h1 {
+    font-size: 4rem;
+  }
+  .notfound p {
+    font-size: 1.1rem;
+  }
+  .home-link {
+    padding: 8px 20px;
+    font-size: 0.95rem;
+  }
+}
+/* 📱 Ещё меньше — узкие экраны */
+@media (max-width: 480px) {
+  .notfound h1 {
+    font-size: 3rem;
+  }
+  .notfound p {
+    font-size: 1rem;
+  }
+  .home-link {
+    padding: 7px 18px;
+    font-size: 0.9rem;
+  }
+}
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px; /* можно изменить под контент */
+  gap: 12px;
+  color: #00eaff;
+  font-family: "Orbitron", sans-serif;
+  text-transform: uppercase;
+}
+
+/* сам спинер */
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(0, 234, 255, 0.2);
+  border-top: 5px solid #00eaff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 10px rgba(0, 234, 255, 0.3);
+}
+
+/* анимация вращения */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* 📱 адаптив — уменьшаем спинер на телефонах */
+@media (max-width: 600px) {
+  .spinner {
+    width: 45px;
+    height: 45px;
+    border-width: 4px;
+  }
+  .spinner-container p {
+    font-size: 0.9rem;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */

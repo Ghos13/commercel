@@ -198,3 +198,50 @@
   margin-top: 10px;
   color: #888;
 }
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* обычная (не выбрана) */
+.category_no_selected {
+  background: #555;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.category_no_selected:hover {
+  background: #666;
+}
+
+/* выбрана — зелёная */
+.category_is_selected {
+  background: #2ecc71;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.6);
+  transform: scale(1.05);
+}
+
+/* 📱 адаптив */
+@media (max-width: 600px) {
+  .category-buttons {
+    justify-content: center;
+  }
+
+  .category_no_selected,
+  .category_is_selected {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+  }
+}

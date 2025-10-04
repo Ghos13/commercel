@@ -4,20 +4,48 @@ import { CategoryContext } from "../../providers/category";
 import { BrandContext } from "../../providers/brand";
 import { AuthContext } from "../../providers/auth";
 import Probimg from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
+import Spinner from "../Spinner.jsx/Spinner";
 
 function Catalog() {
   const { cart,userData,setCart } = useContext(AuthContext);
   const { categoryData, categoryLoading } = useContext(CategoryContext);
   const { brandData, brandLoading } = useContext(BrandContext);
+  const [loadingAddToCart, setLoadingAddToCart] = useState(false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
+
+
   // 🔹 Пагинация
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const productsPerPage = 6;
+  
+  const [selectedBrands,setSelectedBrands] = useState([]);
+  const [selectedCategory,setSelectedCategory] = useState([]);
+
 
   const fetchProducts = async (page = 1, query = "") => {
     setLoading(true);
@@ -53,66 +81,85 @@ function Catalog() {
     return () => clearTimeout(delayDebounce);
   }, [currentPage, searchTerm]);
 
-  const handleAddToCart = async (product) => {
-  try {
-    const bodyData = {
-      product: product.id,  
-      count: 1,          
-      price: product.price,
-      product_name: product.title
-    };
+ const handleAddToCart = async (product) => {
+    try {
+      setLoadingAddToCart(true); // начало загрузки
 
-    const res = await fetch(`${process.env.REACT_APP_API}accounts/bucket/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(bodyData),
-    });
+      const bodyData = {
+        product: product.id,
+        count: 1,
+        price: product.price,
+        product_name: product.title,
+      };
 
-    if (res.ok) {
-      const data = await res.json();
+      const res = await fetch(`${process.env.REACT_APP_API}accounts/bucket/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(bodyData),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
 
         setCart((prev) => {
-        // ищем индекс объекта с таким же id
-        const index = prev.findIndex(item => item.id === data.id);
-      
-        if (index !== -1) {
-          // если есть — увеличиваем count
-          const updated = [...prev];
-          updated[index].count += 1;
-          return updated;
-        } else {
-          // если нет — добавляем новый объект
-          return [...prev, data];
-        }
-      });
-    } else {
-      const err = await res.json();
-      console.error("Ошибка при добавлении в корзину:", err);
+          const index = prev.findIndex((item) => item.id === data.id);
+
+          if (index !== -1) {
+            // если товар уже есть в корзине — увеличиваем количество
+            const updated = [...prev];
+            updated[index].count += 1;
+            return updated;
+          } else {
+            // если нового товара нет — добавляем
+            return [...prev, data];
+          }
+        });
+      } else {
+        const err = await res.json();
+        console.error("Ошибка при добавлении в корзину:", err);
+      }
+    } catch (error) {
+      console.error("Сетевая ошибка:", error);
+    } finally {
+      setLoadingAddToCart(false); // конец загрузки
     }
-  } catch (error) {
-    console.error("Сетевая ошибка:", error);
-  }
   };
+
+
+
+  const changeSelectedCategory = (id) => {
+    console.log(selectedCategory);
+    setSelectedCategory((prev) => {
+      if (prev.includes(id)) {
+         return prev.filter((catId) => catId !== id);
+       } else {
+         return [...prev, id];
+       }
+    })
+  }
 
   return (
     <div className="catalog">
       {/* Категории */}
       {categoryLoading ? (
-        <h2>Загрузка категорий...</h2>
-      ) : (
+    <Spinner text={"Загрузка категорий..."} />
+) : (
         <div className="category-buttons">
-          {categoryData.map((cat) => (
-            <button key={cat.id}>{cat.title}</button>
-          ))}
+          {categoryData.map((cat) => {
+            const class_name = selectedCategory.includes(cat.id) ? "category_is_selected" : "category_no_selected";
+
+            return <button key={cat.id} className={class_name} onClick={() => changeSelectedCategory(cat.i)}>{cat.title}</button>
+          } 
+          )}
         </div>
       )}
 
       {/* Бренды */}
       {brandLoading ? (
-        <h2>Загрузка брендов...</h2>
+    <Spinner text={"Загрузка брендов..."} />
       ) : (
         <div className="brand-buttons">
           {brandData.map((brand) => (
@@ -136,10 +183,10 @@ function Catalog() {
         />
       </div>
 
-      {/* 🛍️ Товары */}
+       {/* 🛍️ Товары */}
       <div className="products">
         {loading ? (
-          <p>Загрузка товаров...</p>
+    <Spinner text={"Загрузка товаров..."} />
         ) : products.length > 0 ? (
           products.map((prod) => (
             <div key={prod.id} className="product-card">
@@ -148,9 +195,11 @@ function Catalog() {
                 <Link to={`/details/${prod.id}`}>{prod.title}</Link>
               </h3>
               <p>{prod.price} сом</p>
-              { userData && 
-              <button onClick={() => handleAddToCart(prod)}>В корзину</button>
-              }
+              {userData && (
+                <button onClick={() => handleAddToCart(prod)} disabled={loadingAddToCart}>
+                  {loadingAddToCart ? "⏳ Добавление..." : "В корзину"}
+                </button>
+              )}
             </div>
           ))
         ) : (
@@ -188,6 +237,7 @@ function Catalog() {
           </button>
         </div>
       )}
+      
 
       {/* 🛒 Корзина */}
 
@@ -196,6 +246,7 @@ function Catalog() {
         <h2>Корзина</h2>
         {cart.length > 0 ? (
           <ul>
+            
             {cart.map((item, idx) => (
               <li key={idx}>
                 {item.product_name} - {item.price} сом  ( {item.count} )
