@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import EventImg from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
+
 const api_url = `${process.env.REACT_APP_API}admin_api/events/`;
 
 function News() {
   const [newsList, setNewsList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Загрузка всех новостей
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -20,11 +23,15 @@ function News() {
         setNewsList(data);
       } catch (err) {
         console.error("Ошибка при получении событий:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEvents();
   }, []);
+
+  if (loading) return <h2>Загрузка новостей...</h2>;
 
   return (
     <div className="news">
@@ -32,8 +39,7 @@ function News() {
         <div className="container">
           <h1 className="news-main-title">Жаңылыктар</h1>
           <p className="news-subtitle">
-            Биздин акыркы жаңылыктар, иш-чаралар жана жетишкендиктер менен
-            таанышыңыз.
+            Биздин акыркы жаңылыктар жана иш-чаралар менен таанышыңыз.
           </p>
         </div>
       </div>
@@ -50,13 +56,13 @@ function News() {
           {newsList.map((item) => (
             <div key={item.id} className="news-card">
               <img
-                src={item.gallery?.[0]?.file || "{ EventImg }"}
+                src={item.gallery?.[0]?.file || EventImg}
                 alt={item.title}
                 className="news-img"
               />
               <div className="news-content">
                 <span className="news-category">
-                  {item.categories?.join(", ")}
+                  {item.categories?.join(", ") || "Без категории"}
                 </span>
                 <h2>{item.title}</h2>
                 <span className="news-date">
@@ -74,7 +80,7 @@ function News() {
         <div className="latest-news">
           <h3>Акыркы жаңылыктар</h3>
           <ul>
-            {newsList.map((item) => (
+            {newsList.slice(0, 5).map((item) => (
               <li key={item.id}>
                 <Link to={`/news/${item.id}`}>{item.title}</Link>
                 <span className="small-date">

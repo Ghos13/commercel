@@ -18,9 +18,23 @@ function Catalog() {
   const [totalPages, setTotalPages] = useState(1);
   const productsPerPage = 6;
 
+
+
+
+ 
   const [formData,setFormData] = useState({
-    page:1,q:"",min_price:0,max_price:3000,on_sale:false,new:false,categories:[],brands:[]
+    page:1,q:"",min_price:0,max_price:0,on_sale:false,new:false,categories:[],brands:[],ordering: "-date",
   });
+
+  const [debouncedFormData, setDebouncedFormData] = useState(formData);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedFormData(formData);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [formData.q, formData.min_price, formData.max_price]);
+
 
   const changeSelectedCategory = (id) => {
     setFormData((prev) => ({
@@ -41,55 +55,49 @@ function Catalog() {
   };
   
   const handleSearch = (e) => {
-    setFormData((prev) => ({ ...prev, q: e.target.value, page: 1 }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value ,page:1}));
   };
   
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: checked, page: 1 }));
+    setFormData((prev) => ({ ...prev, [name]: checked,page:1 }));
   };
 
 
   useEffect(() => {
-    const req = async () => {
+    const fetchProducts = async () => {
       try {
-        // Создаем объект query-параметров из formData
         const params = new URLSearchParams();
-        formData.page = currentPage;
-  
-        if (formData.categories.length > 0) {
-          params.append("category", formData.categories.join(","));
-        }
-        
-        // бренды
-        if (formData.brands.length > 0) {
-          params.append("brand", formData.brands.join(","));
-        }
-        
-        // остальные параметры
-        ["q", "min_price", "max_price", "on_sale", "new", "page"].forEach((key) => {
-          if (formData[key] !== "" && formData[key] !== null && formData[key] !== undefined) {
-            params.append(key, formData[key]);
-          }
-        });
-  
-        const res = await fetch(`${process.env.REACT_APP_API}api/products/?${params.toString()}`);
-         
-        if (!res.ok) {
-          console.log(res.status);
-        } else {
-          const data = await res.json();
-          setProducts(data.results);
-          console.log(data)   
-          setTotalPages(data.num_pages);
-        }
-      } catch (er) {
-        console.log(er);
+        const data = { ...debouncedFormData, ...formData, page: currentPage };
+
+        if (data.categories.length > 0)
+          params.append("category", data.categories.join(","));
+        if (data.brands.length > 0)
+          params.append("brand", data.brands.join(","));
+        if (data.q) params.append("q", data.q);
+        if (data.min_price) params.append("min_price", data.min_price);
+        if (data.max_price) params.append("max_price", data.max_price);
+        if (data.on_sale) params.append("on_sale", "true");
+        if (data.new) params.append("new", "true");
+        if (data.ordering) params.append("ordering", data.ordering);
+
+        params.append("page",data.page);
+
+
+        const res = await fetch(
+          `${process.env.REACT_APP_API}api/products/filter/?${params.toString()}`
+        );
+        if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
+        const result = await res.json();
+        setProducts(result.results);
+        setTotalPages(result.num_pages);
+      } catch (err) {
+        console.error("Ошибка фильтрации:", err);
       }
     };
-  
-    req();
-  }, [formData,currentPage]);
+
+    fetchProducts();
+  }, [formData.ordering,debouncedFormData, formData.categories, formData.brands, formData.on_sale, formData.new, currentPage]);
  
   const handleAddToCart = async (product) => {
     setLoadingAddToCart(true);
@@ -154,6 +162,11 @@ function Catalog() {
                  {cat.title}
                </button>
              ))}
+
+             <button className={formData.new ? "category_is_selected" : "category_no_selected"} onClick={handleCheckboxChange}>
+                Новинки
+             </button>
+
             </div>
 
       )}
@@ -171,31 +184,32 @@ function Catalog() {
                     {brand.title}
                   </button>
                 ))}
+
+                <button className={  formData.on_sale ? "brand_is_selected" : "brand_no_selected" } onClick={handleCheckboxChange}> 
+                  Со Скидкой
+                </button>
+
               </div>
       )}
 
-      <div className="filters-checkbox">
-        <label>
-          <input
-            type="checkbox"
-            name="on_sale"
-            checked={formData.on_sale}
-            onChange={handleCheckboxChange}
-          />
-          Скидка
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="new"
-            checked={formData.new}
-            onChange={handleCheckboxChange}
-          />
-          Новинки
-        </label>
+      <div className="sort-block">
+        <label htmlFor="sort-select">Сортировка:</label>
+        <select
+          id="sort-select"
+          name="ordering"
+          value={formData.ordering}
+          onChange={handleSearch}
+        >
+          <option value="-date">Новые → Старые</option>
+          <option value="date">Старые → Новые</option>
+          <option value="price">Цена ↑</option>
+          <option value="-price">Цена ↓</option>
+          <option value="id">ID ↑</option>
+          <option value="-id">ID ↓</option>
+        </select>
       </div>
-
-
+      
+      
 
       <h1>Каталог</h1>
 
@@ -204,6 +218,7 @@ function Catalog() {
           type="text"
           placeholder="Поиск товара..."
           value={formData.q}
+          name="q"
           onChange={handleSearch}
         />
 
@@ -212,12 +227,14 @@ function Catalog() {
            type="number"
            placeholder="min_price"
            value={formData.min_price}
+           name="min_price"
            onChange={handleSearch}
         />
 
         <input 
            type="number"
            placeholder="max_price"
+           name="max_price"
            value={formData.max_price}
            onChange={handleSearch}
         

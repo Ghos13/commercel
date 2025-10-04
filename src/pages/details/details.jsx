@@ -42,7 +42,7 @@ const Details = () => {
   const addToCart = () => {
     setAdded(true);
     console.log(
-      `Добавлено в корзину: ${product.name}, количество: ${quantity}`
+      `Добавлено в корзину: ${product.title}, количество: ${quantity}`
     );
   };
 
@@ -52,27 +52,74 @@ const Details = () => {
 
   return (
     <div className="details-page">
-      <h1>{product.name}</h1>
-      <img src={product.cover || Probimg} alt={product.name} />
-      <p>Цена: {product.price} сом</p>
-      <p>Категория: {categoryName}</p>
+      <div className="details-container">
+        {/* Левая часть — основная картинка */}
+        <div className="image-section">
+          <img
+            src={product.cover || Probimg}
+            alt={product.title}
+            className="main-image"
+          />
+          {/* Галерея справа */}
+          <div className="gallery">
+            {product.gallery?.length > 0 ? (
+              product.gallery.map((img, i) => (
+                <img
+                  key={i}
+                  src={img.file}
+                  alt={`Галерея ${i}`}
+                  className="gallery-img"
+                />
+              ))
+            ) : (
+              <p className="no-gallery">Нет дополнительных фото</p>
+            )}
+          </div>
+        </div>
 
-      <div className="quantity-selector">
-        <label>Количество: </label>
-        <input
-          type="number"
-          min="1"
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-        />
-      </div>
+        {/* Правая часть — информация */}
+        <div className="info-section">
+          <div className="info-section-desck">
+            <h1>{product.title}</h1>
+          <p className="price">Цена: {product.price} сом</p>
+          <p className="category">Категория: {categoryName}</p>
 
-      <button className="add-cart-btn" onClick={addToCart}>
-        {added ? "Добавлено!" : "Добавить в корзину"}
-      </button>
+          <div className="quantity-selector">
+            <label>Количество: </label>
+            <input
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+            />
+          </div>
 
-      <div className="back-link">
-        <Link to="/catalog">← Назад в каталог</Link>
+          <button className="add-cart-btn" onClick={addToCart}>
+            {added ? "Добавлено!" : "Добавить в корзину"}
+          </button>
+          </div>
+          
+
+          {/* Описание */}
+          <div className="desc-block">
+            <h3>Описание:</h3>
+            {product.desc && typeof product.desc === "object" ? (
+              <ul>
+                {Object.entries(product.desc).map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key}:</strong> {value}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>{product.desc || "Описание отсутствует"}</p>
+            )}
+          </div>
+
+          <div className="back-link">
+            <Link to="/catalog">← Назад в каталог</Link>
+          </div>
+        </div>
       </div>
     </div>
   );
