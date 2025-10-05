@@ -1,14 +1,15 @@
-import { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../providers/auth";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const {userData : authData,userLoading : authLoading} = useContext(AuthContext);
+  const { userData: authData, userLoading: authLoading } =
+    useContext(AuthContext);
 
-    const logoutSubmit = async () => {
-        window.location.href = `${process.env.REACT_APP_API}/accounts/logout/`
-    }
+  const logoutSubmit = async () => {
+    window.location.href = `${process.env.REACT_APP_API}/accounts/logout/`;
+  };
   return (
     <header className="header">
       <div className="container">
@@ -42,47 +43,44 @@ const Header = () => {
                 </Link>
               </li>
 
-              {authData &&
-              <li>
-                <Link className="link-in-header" to="/cart">
-                  себет
-                </Link>
-              </li>
-              }
-              
+              {authData && (
+                <li>
+                  <Link className="link-in-header" to="/cart">
+                    себет
+                  </Link>
+                </li>
+              )}
+
               <li>
                 <Link className="link-in-header" to="/about">
                   биз тууралуу
                 </Link>
               </li>
-              <li>
-                <Link className="link-in-header" to="/contacts">
-                  контакттар
-                </Link>
-              </li>
+
               <li>
                 <Link className="link-in-header" to="/news">
                   жаңылыктар
                 </Link>
               </li>
-              
             </ul>
           </nav>
 
           {/* LOGIN / SIGNIN */}
           <div className="auth-links">
-            {
-            authData ?
-                <>             
-                <button className="longout-btn" onClick={() => logoutSubmit()}> Logout</button>
-                </>
-            :
-            <>
-            <Link className="link-in-header" to="/login">
-              login
-            </Link>
-            </>
-            }
+            {authData ? (
+              <>
+                <button className="longout-btn" onClick={() => logoutSubmit()}>
+                  {" "}
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link className="link-in-header" to="/login">
+                  login
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -11,16 +11,18 @@ import Catalog from "./pages/catalog/Сatalog.jsx";
 import Details from "./pages/details/details.jsx";
 import Cart from "./pages/Cart/Cart.jsx";
 import About from "./pages/About/About.jsx";
-import Contacts from "./pages/Contacts/Contacts.jsx";
 import News from "./pages/News/News.jsx";
 import NewsDetails from "./pages/NewsDetails/NewsDetails.jsx";
 import Reset from "./pages/auth/Reset.jsx";
+import OrderNotifications from "./components/order/OrderNottifications.jsx";
 
 import { InfoContext } from "./providers/info.js";
+import { AuthContext } from "./providers/auth.js";
 import NotFound from "./pages/NotFound.jsx/NotFound.jsx";
 
 function App() {
   const { info_data, info_loading } = useContext(InfoContext);
+  const { userData } = useContext(AuthContext);
 
   if (info_loading) {
     return <h1 className="ddos-guard">Anti Ddos guard... (by Grok) and (WorthlessSoul)</h1>;
@@ -42,13 +44,19 @@ function App() {
         </Helmet>
       )}
 
+      {
+        userData && (
+          <OrderNotifications />
+        )
+      }
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/details/:id" element={<Details />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/about" element={<About />} />
-        <Route path="/contacts" element={<Contacts />} />
+
         <Route path="/news" element={<News />} />
         <Route path="/news/:id" element={<NewsDetails />} />
         <Route path="/login" element={<Login />} />

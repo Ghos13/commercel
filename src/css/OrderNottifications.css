@@ -1,0 +1,53 @@
+.order-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 250px;
+  background: #fffae6;
+  border: 1px solid #ffd700;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.order-notification.expanded {
+  width: 90%;
+  height: 90%;
+  bottom: 5%;
+  right: 5%;
+  border-radius: 12px;
+  overflow-y: auto;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #ffd700;
+  color: #000;
+  font-weight: bold;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.notification-body {
+  padding: 10px;
+}
+
+.notification-body ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.notification-body li {
+  margin-bottom: 5px;
+}

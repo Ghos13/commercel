@@ -1,6 +1,8 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../providers/auth.js";
 import Spinner from "../Spinner.jsx/Spinner.jsx";
+import OrderModal from "../../components/order/OrderModal.jsx";
+
 function Cart() {
   const { cart, setCart, userData, setUserData } = useContext(AuthContext);
 
@@ -8,9 +10,11 @@ function Cart() {
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
+  const [modal,setModal] = useState();
+
   const updateQty = async (id, qty) => {
     try {
-      setLoadingUpdate(true); // старт загрузки
+      setLoadingUpdate(true); 
       let operation;
 
       if (qty === "inc" || qty === "dec") {
@@ -82,8 +86,28 @@ function Cart() {
     return <Spinner text={"Загрузка товара..."} />;
   }
 
+  const order = () => {
+
+      setModal(<OrderModal set_func={setModal} />);
+
+  }
+
   return (
     <div className="cart-page">
+      {  modal && (
+           <div
+             className="modal-container"
+             onClick={() => setModal(null)} 
+           >
+             <div
+               className="modal-content"
+               onClick={(e) => e.stopPropagation()} 
+             >
+               {modal}
+             </div>
+           </div>
+      )}
+
       <h1>🛒 Себет</h1>
 
       {cart.length === 0 ? (
@@ -95,9 +119,9 @@ function Cart() {
               <li key={item.id} className="cart-item">
                 <img src={item.image} alt={item.name} className="cart-image" />
                 <div className="cart-details">
-                  <span className="name">{item.name}</span>
+                  <span className="name">{item.product_name}</span>
                   <span className="description">{item.description}</span>
-                  <span className="unit-price">{item.price} сом / шт</span>
+                  <span className="unit-price">{item.price} сом / {item.count} шт</span>
                   <div className="qty-control">
                     <button
                       disabled={loadingUpdate}
@@ -146,16 +170,25 @@ function Cart() {
               Итого: <strong>{total} сом</strong>
             </p>
           </div>
-
+          
+          { userData.orders.length == 0 ? 
           <button
             className="checkout-btn"
-            onClick={() => alert("Переход к оплате")}
+            onClick={() => order()}
           >
             ✅ Перейти к оплате
+          </button> :
+
+          <button className="checkout-btn">
+            У вас активный заказ 
           </button>
+          }
         </div>
       )}
+      
+
     </div>
+
   );
 }
 

@@ -23,8 +23,7 @@ export const AuthProvider = ({ children }) => {
 
         const data = await res.json();
         setUserLoading(false);
-        setUserData(data.username);
-
+        setUserData(data);
         setCart(data.bucket);
         console.log(data)
       } catch (er) {

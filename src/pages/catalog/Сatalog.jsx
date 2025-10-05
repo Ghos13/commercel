@@ -245,7 +245,7 @@ function Catalog() {
 
 
 
-      <div className="products">
+      <div className="productse">
         {loading ? (
           <Spinner text="Загрузка товаров..." />
         ) : products.length > 0 ? (
