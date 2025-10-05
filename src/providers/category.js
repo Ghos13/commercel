@@ -9,25 +9,30 @@ export const CategoryProvider = ({ children }) => {
   const [categoryLoading, setCategoryLoading] = useState(true);
 
   useEffect(() => {
-    const func = async () => {
+    const fetchCategories = async () => {
       try {
-        const res = await fetch(`${api_url}admin_api/category`);
+        const res = await fetch(`${api_url}admin_api/category/`); // ← добавлен слеш
 
         if (!res.ok) {
-          setCategoryLoading(null);
-          return;
+          throw new Error(`Ошибка сервера: ${res.status}`);
         }
 
-        const importInfoData = await res.json();
-        setCategoryData(importInfoData);
-        setCategoryLoading(false);
+        const text = await res.text();
+        if (text.startsWith("<!DOCTYPE")) {
+          throw new Error("Ответ не является JSON (вернулся HTML)");
+        }
+
+        const data = JSON.parse(text);
+        setCategoryData(data);
       } catch (error) {
-        setCategoryLoading(null);
-        console.error(`Error: ${error}`);
+        console.error("Ошибка при загрузке категорий:", error.message);
+        setCategoryData([]);
+      } finally {
+        setCategoryLoading(false);
       }
     };
 
-    func();
+    fetchCategories();
   }, []);
 
   return (

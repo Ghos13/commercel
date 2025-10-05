@@ -9,25 +9,31 @@ export const BrandProvider = ({ children }) => {
   const [brandLoading, setBrandLoading] = useState(true);
 
   useEffect(() => {
-    const func = async () => {
+    const fetchBrands = async () => {
       try {
-        const res = await fetch(`${api_url}admin_api/brands`);
+        const res = await fetch(`${api_url}admin_api/brands/`); // ← добавлен слеш
 
         if (!res.ok) {
-          setBrandLoading(null);
-          return;
+          throw new Error(`Ошибка сервера: ${res.status}`);
         }
-        console.log(res);
-        const importInfoData = await res.json();
-        setBrandData(importInfoData);
-        setBrandLoading(false);
+
+        // Проверка на JSON
+        const text = await res.text();
+        if (text.startsWith("<!DOCTYPE")) {
+          throw new Error("Ответ не является JSON (вернулся HTML)");
+        }
+
+        const data = JSON.parse(text);
+        setBrandData(data);
       } catch (error) {
-        setBrandLoading(null);
-        console.error(`Error: ${error}`);
+        console.error("Ошибка при загрузке брендов:", error.message);
+        setBrandData([]);
+      } finally {
+        setBrandLoading(false);
       }
     };
 
-    func();
+    fetchBrands();
   }, []);
 
   return (
