@@ -17,7 +17,7 @@ export const BrandProvider = ({ children }) => {
           setBrandLoading(null);
           return;
         }
-
+        console.log(res);
         const importInfoData = await res.json();
         setBrandData(importInfoData);
         setBrandLoading(false);
