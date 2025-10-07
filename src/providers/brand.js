@@ -24,9 +24,10 @@ export const BrandProvider = ({ children }) => {
         }
 
         const data = JSON.parse(text);
+        console.log(text);
         setBrandData(data);
       } catch (error) {
-        console.error("Ошибка при загрузке брендов:", error.message);
+        console.error("Ошибка при загрузке брендов:", error);
         setBrandData([]);
       } finally {
         setBrandLoading(false);

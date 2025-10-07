@@ -1,6 +1,8 @@
 .header {
   padding: 20px 0;
   background: #f4e9dc;
+  display: flex;
+
 }
 
 .header_logo {
@@ -11,7 +13,7 @@
 
 .header-menu {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 
@@ -85,6 +87,7 @@
   .burger {
     display: flex;
   }
+
 
   .header-menu_nav {
     display: none; /* скрыто по умолчанию */

@@ -43,15 +43,8 @@ function News() {
           </p>
         </div>
       </div>
-
+<br />
       <div className="container">
-        <div className="news-filters">
-          <button>Бардыгы</button>
-          <button>Компания жөнүндө</button>
-          <button>Маалыматтык</button>
-          <button>Иш-чаралар</button>
-        </div>
-
         <div className="news-list">
           {newsList.map((item) => (
             <div key={item.id} className="news-card">
