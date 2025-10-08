@@ -1,91 +1,46 @@
-import { useState, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../providers/auth";
 
-const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { userData: authData, userLoading: authLoading } =
-    useContext(AuthContext);
+function Header({ cart }) {
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
-  const logoutSubmit = async () => {
-    window.location.href = `${process.env.REACT_APP_API}/accounts/logout/`;
+  useEffect(() => {
+    document.body.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
-  return (
-    <header className="header">
-      <div className="container">
-        <div className="header-menu">
-          {/* ЛОГО */}
-          <div className="header-menu_logo">
-            <Link to="/">
-              {/* <img className="header_logo" src={logo} alt="logo-DTS" /> */}
-              <i>
-                <strong className="header-menu_strong">DTS</strong>
-              </i>
-            </Link>
-          </div>
 
-          {/* БУРГЕР */}
-          <button
-            className={`burger ${isOpen ? "active" : ""}`}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
+  return (
+    <header className="hs-header">
+      <div className="hs-inner">
+        {/* Логотип */}
+        <Link to="/" className="hs-logo">
+          🛒 DTS
+        </Link>
+
+        {/* Правая панель */}
+        <div className="hs-right">
+          <button className="hs-theme-btn" onClick={toggleTheme}>
+            {theme === "light" ? "🌙" : "☀️"}
           </button>
 
-          {/* МЕНЮ */}
-          <nav className={`header-menu_nav ${isOpen ? "open" : ""}`}>
-            <ul className="header-navbar">
-              <li>
-                <Link className="link-in-header" to="/catalog">
-                  каталог
-                </Link>
-              </li>
-
-              {authData && (
-                <li>
-                  <Link className="link-in-header" to="/cart">
-                    себет
-                  </Link>
-                </li>
-              )}
-
-              <li>
-                <Link className="link-in-header" to="/about">
-                  биз тууралуу
-                </Link>
-              </li>
-
-              <li>
-                <Link className="link-in-header" to="/news">
-                  жаңылыктар
-                </Link>
-              </li>
-            </ul>
-          </nav>
-
-          {/* LOGIN / SIGNIN */}
-          <div className="auth-links">
-            {authData ? (
-              <>
-                <button className="longout-btn" onClick={() => logoutSubmit()}>
-                  {" "}
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link className="link-in-header" to="/login">
-                  login
-                </Link>
-              </>
+          <Link to="/cart" className="hs-cart">
+            🛒
+            {cart?.length > 0 && (
+              <span className="hs-cart-count">{cart.length}</span>
             )}
-          </div>
+          </Link>
+
+          <Link to="/login" className="hs-login">
+            Войти
+          </Link>
         </div>
       </div>
     </header>
   );
-};
+}
 
 export default Header;

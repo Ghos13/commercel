@@ -16,59 +16,90 @@ function Catalog() {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
+  const [isGridView, setIsGridView] = useState(true);
+  const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [error, setError] = useState(null);
+
   const productsPerPage = 6;
 
-
-
-
- 
-  const [formData,setFormData] = useState({
-    page:1,q:"",min_price:0,max_price:0,on_sale:false,new:false,categories:[],brands:[],ordering: "-date",
+  const [formData, setFormData] = useState(() => {
+    // загружаем фильтры из localStorage
+    const saved = localStorage.getItem("catalogFilters");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          page: 1,
+          q: "",
+          min_price: 0,
+          max_price: 0,
+          on_sale: false,
+          new: false,
+          in_stock: false,
+          categories: [],
+          brands: [],
+          ordering: "-date",
+        };
   });
 
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
 
+  // debounce (отложенное обновление фильтра)
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedFormData(formData);
-    }, 500);
+    }, 600);
     return () => clearTimeout(handler);
-  }, [formData.q, formData.min_price, formData.max_price]);
+  }, [formData]);
 
+  // сохраняем фильтры
+  useEffect(() => {
+    localStorage.setItem("catalogFilters", JSON.stringify(formData));
+  }, [formData]);
 
-  const changeSelectedCategory = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      categories: prev.categories.includes(id)
-        ? prev.categories.filter((c) => c !== id)
-        : [...prev.categories, id],
-    }));
-  };
-  
-  const changeSelectedBrand = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      brands: prev.brands.includes(id)
-        ? prev.brands.filter((b) => b !== id)
-        : [...prev.brands, id],
-    }));
-  };
-  
-  const handleSearch = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value ,page:1}));
-  };
-  
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: checked,page:1 }));
+  const resetFilters = () => {
+    setFormData({
+      page: 1,
+      q: "",
+      min_price: 0,
+      max_price: 0,
+      on_sale: false,
+      new: false,
+      in_stock: false,
+      categories: [],
+      brands: [],
+      ordering: "-date",
+    });
+    setCurrentPage(1);
   };
 
+  // --- переключение категорий и брендов
+  const toggleSelection = (list, id) => {
+    return list.includes(id)
+      ? list.filter((x) => x !== id)
+      : [...list, id];
+  };
 
+  const handleCategory = (id) =>
+    setFormData((prev) => ({ ...prev, categories: toggleSelection(prev.categories, id), page: 1 }));
+
+  const handleBrand = (id) =>
+    setFormData((prev) => ({ ...prev, brands: toggleSelection(prev.brands, id), page: 1 }));
+
+  const handleChange = (e) =>
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value, page: 1 }));
+
+  const handleCheckbox = (e) =>
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.checked, page: 1 }));
+
+  // --- Загрузка продуктов
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const params = new URLSearchParams();
-        const data = { ...debouncedFormData, ...formData, page: currentPage };
+        const data = { ...debouncedFormData, page: currentPage };
 
         if (data.categories.length > 0)
           params.append("category", data.categories.join(","));
@@ -79,27 +110,33 @@ function Catalog() {
         if (data.max_price) params.append("max_price", data.max_price);
         if (data.on_sale) params.append("on_sale", "true");
         if (data.new) params.append("new", "true");
+        if (data.in_stock) params.append("in_stock", "true");
         if (data.ordering) params.append("ordering", data.ordering);
-
-        params.append("page",data.page);
-
+        params.append("page", data.page);
 
         const res = await fetch(
           `${process.env.REACT_APP_API}api/products/filter/?${params.toString()}`
         );
-        if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
+        if (!res.ok) throw new Error(`Ошибка ${res.status}`);
         const result = await res.json();
         setProducts(result.results);
         setTotalPages(result.num_pages);
       } catch (err) {
-        console.error("Ошибка фильтрации:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [formData.ordering,debouncedFormData, formData.categories, formData.brands, formData.on_sale, formData.new, currentPage]);
- 
+  }, [debouncedFormData, currentPage]);
+
+  // --- Добавление в корзину
   const handleAddToCart = async (product) => {
+    if (!userData) {
+      alert("Авторизуйтесь, чтобы добавить в корзину!");
+      return;
+    }
     setLoadingAddToCart(true);
     try {
       const bodyData = {
@@ -119,27 +156,12 @@ function Catalog() {
         body: JSON.stringify(bodyData),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(
-          `Ошибка при добавлении в корзину: ${
-            err.message || "Неизвестная ошибка"
-          }`
-        );
-      }
+      if (!res.ok) throw new Error("Ошибка при добавлении в корзину");
 
       const data = await res.json();
-      setCart((prev) => {
-        const index = prev.findIndex((item) => item.id === data.id);
-        if (index !== -1) {
-          const updated = [...prev];
-          updated[index].count += 1;
-          return updated;
-        }
-        return [...prev, data];
-      });
+      setCart((prev) => [...prev, data]);
     } catch (err) {
-      console.error("Сетевая ошибка:", err);
+      console.error(err);
     } finally {
       setLoadingAddToCart(false);
     }
@@ -147,174 +169,175 @@ function Catalog() {
 
   return (
     <div className="catalog">
-     
-
-      {categoryLoading ? (
-        <Spinner text="Загрузка категорий..." />
-         ) : (
-           <div className="category-buttons">
-             {categoryData.map((cat) => (
-               <button
-                 key={cat.id}
-                 className={formData.categories.includes(cat.id) ? "category_is_selected" : "category_no_selected"}
-                 onClick={() => changeSelectedCategory(cat.id)}
-               >
-                 {cat.title}
-               </button>
-             ))}
-
-             <button className={formData.new ? "category_is_selected" : "category_no_selected"} onClick={handleCheckboxChange}>
-                Новинки
-             </button>
-
-            </div>
-
-      )}
-   
-      {brandLoading ? (
-           <Spinner text="Загрузка брендов..." />
-         ) : (
-              <div className="brand-buttons">
-                {brandData.map((brand) => (
-                  <button
-                    key={brand.id}
-                    className={formData.brands.includes(brand.id) ? "brand_is_selected" : "brand_no_selected"}
-                    onClick={() => changeSelectedBrand(brand.id)}
-                  >
-                    {brand.title}
-                  </button>
-                ))}
-
-                <button className={  formData.on_sale ? "brand_is_selected" : "brand_no_selected" } onClick={handleCheckboxChange}> 
-                  Со Скидкой
-                </button>
-
-              </div>
-      )}
-
-      <div className="sort-block">
-        <label htmlFor="sort-select">Сортировка:</label>
-        <select
-          id="sort-select"
-          name="ordering"
-          value={formData.ordering}
-          onChange={handleSearch}
-        >
-          <option value="-date">Новые → Старые</option>
-          <option value="date">Старые → Новые</option>
-          <option value="price">Цена ↑</option>
-          <option value="-price">Цена ↓</option>
-          <option value="id">ID ↑</option>
-          <option value="-id">ID ↓</option>
-        </select>
-      </div>
-      
-      
-
-      <h1>Каталог</h1>
-
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Поиск товара..."
-          value={formData.q}
-          name="q"
-          onChange={handleSearch}
-        />
-
-
-        <input 
-           type="number"
-           placeholder="min_price"
-           value={formData.min_price}
-           name="min_price"
-           onChange={handleSearch}
-        />
-
-        <input 
-           type="number"
-           placeholder="max_price"
-           name="max_price"
-           value={formData.max_price}
-           onChange={handleSearch}
-        
-        />
-      
+      <div className="catalog-header">
+        <h1>Каталог товаров</h1>
+        <button onClick={() => setShowFilters(!showFilters)}>
+          {showFilters ? "Скрыть фильтры" : "Показать фильтры"}
+        </button>
+        <button onClick={resetFilters} className="reset-btn">
+          Сбросить фильтры
+        </button>
       </div>
 
+      {/* Фильтры */}
+      {showFilters && (
+        <div className="filters-panel">
+          <div className="search">
+            <input
+              type="text"
+              name="q"
+              placeholder="Поиск..."
+              value={formData.q}
+              onChange={handleChange}
+            />
+          </div>
 
+          <div className="price-filter">
+            <input
+              type="number"
+              name="min_price"
+              placeholder="Мин. цена"
+              value={formData.min_price}
+              onChange={handleChange}
+            />
+            <input
+              type="number"
+              name="max_price"
+              placeholder="Макс. цена"
+              value={formData.max_price}
+              onChange={handleChange}
+            />
+          </div>
 
+          <div className="checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                name="on_sale"
+                checked={formData.on_sale}
+                onChange={handleCheckbox}
+              />
+              Со скидкой
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="new"
+                checked={formData.new}
+                onChange={handleCheckbox}
+              />
+              Новинки
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="in_stock"
+                checked={formData.in_stock}
+                onChange={handleCheckbox}
+              />
+              В наличии
+            </label>
+          </div>
 
-      <div className="productse">
-        {loading ? (
-          <Spinner text="Загрузка товаров..." />
-        ) : products.length > 0 ? (
-          products.map((prod) => (
-            <div key={prod.id} className="product-card">
-              <img src={prod.cover || Probimg} alt={prod.title} />
-              <h3>
-                <Link to={`/details/${prod.id}`}>{prod.title}</Link>
-              </h3>
-              <p>{prod.price} сом</p>
-              {userData && (
+          <div className="category-filter">
+            <h3>Категории</h3>
+            {categoryLoading ? (
+              <Spinner />
+            ) : (
+              categoryData.map((cat) => (
                 <button
-                  onClick={() => handleAddToCart(prod)}
-                  disabled={loadingAddToCart}
+                  key={cat.id}
+                  className={
+                    formData.categories.includes(cat.id)
+                      ? "selected"
+                      : "unselected"
+                  }
+                  onClick={() => handleCategory(cat.id)}
                 >
-                  {loadingAddToCart ? "⏳ Добавление..." : "В корзину"}
+                  {cat.title}
+                </button>
+              ))
+            )}
+          </div>
+
+          <div className="brand-filter">
+            <h3>Бренды</h3>
+            {brandLoading ? (
+              <Spinner />
+            ) : (
+              brandData.map((brand) => (
+                <button
+                  key={brand.id}
+                  className={
+                    formData.brands.includes(brand.id)
+                      ? "selected"
+                      : "unselected"
+                  }
+                  onClick={() => handleBrand(brand.id)}
+                >
+                  {brand.title}
+                </button>
+              ))
+            )}
+          </div>
+
+          <div className="sort">
+            <label>Сортировка:</label>
+            <select
+              name="ordering"
+              value={formData.ordering}
+              onChange={handleChange}
+            >
+              <option value="-date">Новые → Старые</option>
+              <option value="price">Цена ↑</option>
+              <option value="-price">Цена ↓</option>
+              <option value="title">Название A-Z</option>
+              <option value="-title">Название Z-A</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      {/* Товары */}
+      <div className={isGridView ? "products-grid" : "products-list"}>
+        {loading ? (
+          <Spinner text="Загрузка..." />
+        ) : error ? (
+          <p className="error">{error}</p>
+        ) : products.length === 0 ? (
+          <p>Товары не найдены</p>
+        ) : (
+          products.map((p) => (
+            <div key={p.id} className="product-card">
+              <img src={p.cover || Probimg} alt={p.title} />
+              <h3>
+                <Link to={`/details/${p.id}`}>{p.title}</Link>
+              </h3>
+              <p>{p.price} сом</p>
+              {p.on_sale && <span className="sale-badge">🔥 Скидка</span>}
+              {p.new && <span className="new-badge">🆕</span>}
+              {userData && (
+                <button onClick={() => handleAddToCart(p)} disabled={loadingAddToCart}>
+                  {loadingAddToCart ? "⏳..." : "В корзину"}
                 </button>
               )}
             </div>
           ))
-        ) : (
-          <p>Товары не найдены</p>
         )}
       </div>
 
+      {/* Пагинация */}
       {totalPages > 1 && (
         <div className="pagination">
-          <button
-            className="prev"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-          >
-            Назад
-          </button>
-
           {Array.from({ length: totalPages }, (_, i) => (
             <button
-              key={i + 1}
-              className={currentPage === i + 1 ? "active" : ""}
+              key={i}
               onClick={() => setCurrentPage(i + 1)}
+              className={currentPage === i + 1 ? "active" : ""}
             >
               {i + 1}
             </button>
           ))}
-
-          <button
-            className="next"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-          >
-            Вперёд
-          </button>
-        </div>
-      )}
-
-      {userData && (
-        <div className="cart">
-          <h2>Корзина</h2>
-          {cart.length > 0 ? (
-            <ul>
-              {cart.map((item, idx) => (
-                <li key={idx}>
-                  {item.product_name} - {item.price} сом ({item.count})
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Корзина пуста</p>
-          )}
         </div>
       )}
     </div>

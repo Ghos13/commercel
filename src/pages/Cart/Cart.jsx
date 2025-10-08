@@ -3,18 +3,18 @@ import { AuthContext } from "../../providers/auth.js";
 import Spinner from "../Spinner.jsx/Spinner.jsx";
 import OrderModal from "../../components/order/OrderModal.jsx";
 
+
 function Cart() {
   const { cart, setCart, userData, setUserData } = useContext(AuthContext);
 
   const [discount, setDiscount] = useState(0);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
-
-  const [modal,setModal] = useState();
+  const [modal, setModal] = useState();
 
   const updateQty = async (id, qty) => {
     try {
-      setLoadingUpdate(true); 
+      setLoadingUpdate(true);
       let operation;
 
       if (qty === "inc" || qty === "dec") {
@@ -43,19 +43,17 @@ function Cart() {
         );
       } else if (response.status === 204) {
         setCart(cart.filter((item) => item.id !== id));
-      } else {
-        console.error("Ошибка при обновлении количества:", response.status);
       }
     } catch (error) {
-      console.error("Ошибка сети:", error);
+      console.error("Ошибка при обновлении:", error);
     } finally {
-      setLoadingUpdate(false); // конец загрузки
+      setLoadingUpdate(false);
     }
   };
 
   const removeItem = async (id) => {
     try {
-      setLoadingDelete(true); // старт загрузки
+      setLoadingDelete(true);
       const response = await fetch(
         `${process.env.REACT_APP_API}accounts/bucket/${id}`,
         {
@@ -67,13 +65,11 @@ function Cart() {
 
       if (response.status === 204) {
         setCart(cart.filter((item) => item.id !== id));
-      } else {
-        console.error("Ошибка при удалении товара:", response.status);
       }
     } catch (error) {
       console.error("Ошибка сети:", error);
     } finally {
-      setLoadingDelete(false); // конец загрузки
+      setLoadingDelete(false);
     }
   };
 
@@ -81,72 +77,59 @@ function Cart() {
   const total = subtotal - discount;
   const totalItems = cart.reduce((sum, item) => sum + item.count, 0);
 
-  // Если идет любая загрузка
   if (loadingUpdate || loadingDelete) {
-    return <Spinner text={"Загрузка товара..."} />;
+    return <Spinner text="Обновление корзины..." />;
   }
 
   const order = () => {
-
-      setModal(<OrderModal set_func={setModal} />);
-
-  }
+    setModal(<OrderModal set_func={setModal} />);
+  };
 
   return (
     <div className="cart-page">
-      {  modal && (
-           <div
-             className="modal-container"
-             onClick={() => setModal(null)} 
-           >
-             <div
-               className="modal-content"
-               onClick={(e) => e.stopPropagation()} 
-             >
-               {modal}
-             </div>
-           </div>
+      {modal && (
+        <div className="modal-container" onClick={() => setModal(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            {modal}
+          </div>
+        </div>
       )}
 
-      <h1>🛒 Себет</h1>
+      <h1 className="cart-title">🛒 Ваша корзина</h1>
 
       {cart.length === 0 ? (
-        <p className="empty">Ваша корзина пуста. Добавьте товары!</p>
+        <p className="empty">Корзина пуста. Добавьте товары, чтобы продолжить!</p>
       ) : (
         <div className="cart-container">
           <ul className="cart-list">
             {cart.map((item) => (
               <li key={item.id} className="cart-item">
-                <img src={item.image} alt={item.name} className="cart-image" />
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="cart-image"
+                />
                 <div className="cart-details">
-                  <span className="name">{item.product_name}</span>
-                  <span className="description">{item.description}</span>
-                  <span className="unit-price">{item.price} сом / {item.count} шт</span>
+                  <h3>{item.product_name}</h3>
+                  <p>{item.description || "Без описания"}</p>
+                  <p className="price-tag">
+                    {item.price} сом / {item.count} шт
+                  </p>
                   <div className="qty-control">
-                    <button
-                      disabled={loadingUpdate}
-                      onClick={() => updateQty(item.id, "dec")}
-                    >
-                      -
-                    </button>
+                    <button onClick={() => updateQty(item.id, "dec")}>−</button>
                     <input
                       type="number"
-                      value={item.count}
                       min="1"
-                      disabled={loadingUpdate}
+                      value={item.count}
                       onChange={(e) => updateQty(item.id, +e.target.value)}
                     />
-                    <button
-                      disabled={loadingUpdate}
-                      onClick={() => updateQty(item.id, "inc")}
-                    >
-                      +
-                    </button>
+                    <button onClick={() => updateQty(item.id, "inc")}>+</button>
                   </div>
-                  <span className="price">{item.price * item.count} сом</span>
+                  <p className="total-price">
+                    <strong>{item.price * item.count} сом</strong>
+                  </p>
                 </div>
                 <button
-                  disabled={loadingDelete}
                   className="remove-btn"
                   onClick={() => removeItem(item.id)}
                 >
@@ -157,38 +140,23 @@ function Cart() {
           </ul>
 
           <div className="summary">
-            <p>
-              Товаров: <strong>{totalItems}</strong>
-            </p>
-            <p>
-              Сумма без скидки: <strong>{subtotal} сом</strong>
-            </p>
-            <p>
-              Скидка: <strong>{discount} сом</strong>
-            </p>
-            <p className="total">
-              Итого: <strong>{total} сом</strong>
-            </p>
+            <p>Товаров: <strong>{totalItems}</strong></p>
+            <p>Сумма: <strong>{subtotal} сом</strong></p>
+            <p>Скидка: <strong>{discount} сом</strong></p>
+            <h3 className="summary-total">Итого: {total} сом</h3>
+            {userData.orders.length === 0 ? (
+              <button className="checkout-btn" onClick={order}>
+                ✅ Перейти к оплате
+              </button>
+            ) : (
+              <button className="checkout-btn disabled">
+                У вас активный заказ
+              </button>
+            )}
           </div>
-          
-          { userData.orders.length == 0 ? 
-          <button
-            className="checkout-btn"
-            onClick={() => order()}
-          >
-            ✅ Перейти к оплате
-          </button> :
-
-          <button className="checkout-btn">
-            У вас активный заказ 
-          </button>
-          }
         </div>
       )}
-      
-
     </div>
-
   );
 }
 
