@@ -3,7 +3,7 @@ import { InfoContext } from "../../providers/info";
 import { CategoryContext } from "../../providers/category";
 import { useContext, useEffect, useState } from "react";
 import Spinner from "../Spinner.jsx/Spinner";
-import productImg from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
+import productImg from "../../images/pngtree-not-found-image_2238448.jpg"
 
 const Home = () => {
   const { info_data, info_loading } = useContext(InfoContext);

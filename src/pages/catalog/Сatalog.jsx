@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { CategoryContext } from "../../providers/category";
 import { BrandContext } from "../../providers/brand";
 import { AuthContext } from "../../providers/auth";
-import Probimg from "../../images/gaming-laptops-og-image-C_hhqOLl.webp";
+import Probimg from "../../images/pngtree-not-found-image_2238448.jpg";
 import Spinner from "../Spinner.jsx/Spinner";
 
 function Catalog() {

@@ -25,7 +25,11 @@ function App() {
   const { userData } = useContext(AuthContext);
 
   if (info_loading) {
-    return <h1 className="ddos-guard">Anti Ddos guard... (by Grok) and (WorthlessSoul)</h1>;
+    return (
+      <h1 className="ddos-guard">
+        Anti Ddos guard... (by Grok) and (WorthlessSoul)
+      </h1>
+    );
   }
 
   return (
@@ -44,11 +48,7 @@ function App() {
         </Helmet>
       )}
 
-      {
-        userData && (
-          <OrderNotifications />
-        )
-      }
+      {userData && <OrderNotifications />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -62,9 +62,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot" element={<Reset />} />
-        <Route path="*" element={<NotFound/>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-
+      <br />
+      
       <Footer />
     </BrowserRouter>
   );

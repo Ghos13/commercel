@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../providers/auth.js";
 
 function Header({ cart }) {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const { userData, setUserData } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
@@ -11,6 +14,12 @@ function Header({ cart }) {
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
+  const handleLogout = () => {
+    setUserData(null);
+    localStorage.removeItem("userData");
+    navigate("/login");
   };
 
   return (
@@ -27,16 +36,26 @@ function Header({ cart }) {
             {theme === "light" ? "🌙" : "☀️"}
           </button>
 
-          <Link to="/cart" className="hs-cart">
-            🛒
-            {cart?.length > 0 && (
-              <span className="hs-cart-count">{cart.length}</span>
-            )}
-          </Link>
+          {/* 👇 Корзина отображается только если пользователь авторизован */}
+          {userData && (
+            <Link to="/cart" className="hs-cart">
+              🛒
+              {cart?.length > 0 && (
+                <span className="hs-cart-count">{cart.length}</span>
+              )}
+            </Link>
+          )}
 
-          <Link to="/login" className="hs-login">
-            Войти
-          </Link>
+          {/* 👇 Если не авторизован — Войти, если авторизован — Выйти */}
+          {!userData ? (
+            <Link to="/login" className="hs-login">
+              Войти
+            </Link>
+          ) : (
+            <button className="hs-login" onClick={handleLogout}>
+              Выйти
+            </button>
+          )}
         </div>
       </div>
     </header>
